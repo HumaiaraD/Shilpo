@@ -3,6 +3,10 @@ from sqlalchemy.orm import validates
 db = SQLAlchemy()
 from sqlalchemy.ext.associationproxy import association_proxy
 from marshmallow import Schema, fields
+from flask_bcrypt import Bcrypt
+from sqlalchemy.ext.hybrid import hybrid_property
+
+bcrypt = Bcrypt()
 
 #defining models here:
 
@@ -36,7 +40,7 @@ class Artists(db.Model):
 
 class ArtistSchema(Schema):
     id = fields.Int(dump_only=True)
-    name = fields.String(required=True)
+    name = fields.String(required=True, )
     info = fields.String(allow_none=True)
 
     collections = fields.Nested(lambda: CollectionSchema(exclude=("artist",)), many=True, dump_only=True)

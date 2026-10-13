@@ -118,7 +118,6 @@ def create_collection():
     try:
         data = CollectionSchema().load(request.get_json()) or {}
 
-        #checking artist exist
         artist = db.session.get(Artists, data["artist_id"])
         if artist is None:
             return {"error": "Artist not found"}, 404
@@ -196,7 +195,6 @@ def create_artwork():
     try:
         data = ArtworkSchema().load(request.get_json()) or {}
 
-        #checking artist and collection exists
         collection =db.session.get(Collection, data["collection_id"])
         if collection is None:
             return {"error": "Collection not found"}, 404

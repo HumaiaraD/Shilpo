@@ -40,6 +40,5 @@ const CollectionForm = () => {
         </form>
     </>
   )
-}
 
 export default CollectionForm
