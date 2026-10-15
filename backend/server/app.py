@@ -1,10 +1,11 @@
 import os
-from flask import Flask, make_response, request
+from flask import Flask, make_response, request, session
 from flask_cors import CORS
 from flask_migrate import Migrate
 from marshmallow import ValidationError
 from dotenv import load_dotenv
 from pathlib import Path
+from auth import auth_bp
 
 from models import *
 
@@ -13,12 +14,16 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+
+app.register_blueprint(auth_bp)
 
 migrate = Migrate(app, db)
 
 db.init_app(app)
+bcrypt.init_app(app)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, origins=["http://localhost:5173"], supports_credentials=True)
 
 # Define Routes here
 @app.route("/", methods=["GET"])
@@ -46,28 +51,41 @@ def get_artist(id):
 
 @app.route("/artists", methods=["POST"])
 def create_artist():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     try :
         data = ArtistSchema().load(request.get_json()) or {}
         
-        artist = Artists(**data)
+        artist = Artists(**data, user_id=user_id)
         db.session.add(artist)
         db.session.commit()
         
-        return make_response(ArtworkSchema().dump(artist), 201)
+        return make_response(ArtistSchema().dump(artist), 201)
     
     except ValidationError as error:
         db.session.rollback()
         return {"errors": error.messages}, 422
     
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()
         return {"error": str(error)}, 422
 
 @app.route("/artists/<int:id>", methods=["PATCH"])
 def update_artist(id):
+    # validating user id
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     artist = Artists.query.filter(Artists.id == id).first()
     if artist is None:
         return {"error": "Artist not found"}, 404
+    if artist.user_id != user_id:
+        return {"error": "You can only modify your own artists."}, 403
     try:
         data = ArtistSchema().load(request.get_json(), partial=True)
         for key, value in data.items():
@@ -80,21 +98,29 @@ def update_artist(id):
         db.session.rollback()
         return {"errors": error.messages}, 422
     
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()
         return {"error": str(error)}, 422  
 
 @app.route("/artists/<int:id>", methods=["DELETE"])
 def delete_artist(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+
     artist = db.session.get(Artists, id)
+
     if artist is None:
         return {"error": "Artist not found"}, 404
+
+    if artist.user_id != user_id:
+        return {"error": "You can only delete your own artists."}, 403
 
     db.session.delete(artist)
     db.session.commit()
 
     return "", 204
-
 #--------------------------------------------------------------------------------------------------------------
 
 
@@ -115,12 +141,20 @@ def get_collection(id):
 
 @app.route("/collections", methods=["POST"])
 def create_collection():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     try:
         data = CollectionSchema().load(request.get_json()) or {}
 
         artist = db.session.get(Artists, data["artist_id"])
         if artist is None:
             return {"error": "Artist not found"}, 404
+        
+        if artist.user_id != user_id:
+            return {"error": "You can only add collections to your own artists."}, 403
 
         collection = Collection(**data)
         db.session.add(collection)
@@ -131,15 +165,24 @@ def create_collection():
         db.session.rollback()
         return {"errors": error.messages}, 422
     
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()
         return {"error": str(error)}, 422
 
 @app.route("/collections/<int:id>", methods=["PATCH"])
 def update_collection(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+
     collection = Collection.query.filter(Collection.id == id).first()
     if collection is None:
         return {"error": "Collection not found"}, 404
+    
+    if collection.artist.user_id != user_id:
+        return {"error": "You can only modify your own collections."}, 403
+
     try:
         data = CollectionSchema().load(request.get_json(), partial=True)
         if "artist_id" in data:
@@ -147,6 +190,9 @@ def update_collection(id):
 
             if artist is None:
                 return {"error": "Artist not found"}, 404
+
+            if artist.user_id != user_id:
+                return {"error": "You can only move collections to your own artists."}, 403
 
         for key, value in data.items():
             setattr(collection, key, value)
@@ -158,15 +204,23 @@ def update_collection(id):
         db.session.rollback()
         return {"errors": error.messages}, 422
     
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()
         return {"error": str(error)}, 422
 
 @app.route("/collections/<int:id>", methods=["DELETE"])
 def delete_collection(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+
     collection = db.session.get(Collection, id)
     if collection is None:
         return {"error": "Collection not found"}, 404
+
+    if collection.artist.user_id != user_id:
+        return {"error": "You can only delete your own collections."}, 403
 
     db.session.delete(collection)
     db.session.commit()
@@ -192,12 +246,22 @@ def get_artwork(id):
 
 @app.route("/artworks", methods=["POST"])
 def create_artwork():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     try:
         data = ArtworkSchema().load(request.get_json()) or {}
 
         collection =db.session.get(Collection, data["collection_id"])
         if collection is None:
             return {"error": "Collection not found"}, 404
+
+        if collection.artist.user_id != user_id:
+            return {
+                "error": "You can only add artworks to your own collections."
+            }, 403
 
         artwork = Artworks(**data)
         db.session.add(artwork)
@@ -209,23 +273,38 @@ def create_artwork():
         db.session.rollback()
         return {"errors": error.messages}, 422
         
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()    
         return {"error": str(error)}, 422  
 
 @app.route("/artworks/<int:id>", methods=["PATCH"])
 def update_artwork(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     artwork = Artworks.query.filter(Artworks.id == id).first()
 
     if artwork is None:
         return {"error": "Artwork not found"}, 404
 
+    if artwork.collection.artist.user_id != user_id:
+        return {"error": "You can only modify your own artworks."}, 403
+
+
     try:
         data = ArtworkSchema().load(request.get_json(), partial=True)
         if "collection_id" in data:
             collection = db.session.get(Collection, data["collection_id"])
+
             if collection is None:
                 return {"error": "Collection not found"}, 404
+
+            if collection.artist.user_id != user_id:
+                return {
+                    "error": "You can only move artworks to your own collections."
+                }, 403
 
         for key, value in data.items():
             setattr(artwork, key, value)
@@ -237,15 +316,23 @@ def update_artwork(id):
         db.session.rollback()
         return {"errors": error.messages}, 422
         
-    except ValidationError as error:
+    except ValueError as error:
         db.session.rollback()    
         return {"error": str(error)}, 422  
 
 @app.route("/artworks/<int:id>", methods=["DELETE"])
 def delete_artwork(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+    
     artwork = db.session.get(Artworks, id)
     if artwork is None:
         return {"error": "Artwork not found"}, 404
+    
+    if artwork.collection.artist.user_id != user_id:
+        return {"error": "You can only modify your own artworks."}, 403
 
     db.session.delete(artwork)
     db.session.commit()

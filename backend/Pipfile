@@ -7,8 +7,11 @@ name = "pypi"
 flask = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
-flask-cors = "*"
 marshmallow = "*"
+psycopg = {extras = ["binary"], version = "*"}
+python-dotenv = "*"
+flask-cors = "*"
+flask-bcrypt = "*"
 
 [dev-packages]
 

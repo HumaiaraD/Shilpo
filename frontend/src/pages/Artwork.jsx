@@ -1,8 +1,10 @@
 import { useState } from "react";
 import useFetch from "../components/useFetch";
 import Search from "../components/Search"
+import Display from "../components/Display";
 
-function Artwork() {
+
+const Artwork = () => {
 
   const {
     items: artists,
@@ -25,6 +27,7 @@ function Artwork() {
   const error = artistsError || collectionsError || artworksError;
 
   const [ search, setSearch ] = useState("");
+  const [selectedArtwork, setSelectedArtwork] = useState(null);
 
   const filteredArtworks = artworks.filter((artwork) => {
     const collection = collections.find(
@@ -53,7 +56,16 @@ function Artwork() {
     return <p className="text-red-600">{error.message}</p>;
   }
 
+  const selectedCollection = collections.find(
+    (collection) => collection.id === selectedArtwork?.collection_id
+  );
+
+  const selectedArtist = artists.find(
+    (artist) => artist.id === selectedCollection?.artist_id
+  );
+
   return (
+    <>
   <main className="max-w-6xl mx-auto px-4 py-10">
     <h1 className="text-4xl text-center mb-8">Explore Art</h1>
 
@@ -83,11 +95,18 @@ function Artwork() {
             className="overflow-hidden rounded-2xl border border-stone-200"
           >
             {artwork.image_url ? (
-              <img
-                src={artwork.image_url}
-                alt={artwork.title}
-                className="w-full h-72 object-cover"
-              />
+              <button
+                type="button"
+                onClick={() => setSelectedArtwork(artwork)}
+                className="block w-full"
+                aria-label={`View details for ${artwork.title}`}
+              >
+                <img
+                  src={artwork.image_url}
+                  alt={artwork.title}
+                  className="h-72 w-full object-cover"
+                />
+              </button>
             ) : (
               <div className="h-72 bg-stone-100 flex items-center justify-center">
                 No image
@@ -106,6 +125,7 @@ function Artwork() {
       })}
     </div>
   </main>
+  </>
 );
 }
 

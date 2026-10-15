@@ -11,7 +11,6 @@ import User from './pages/User'
 import Signup from "./pages/Signup";
 
 
-gsap.registerPlugin(useGSAP);
 
 function App() {
   const [user, setUser] = useState(null);

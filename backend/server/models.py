@@ -10,12 +10,49 @@ bcrypt = Bcrypt()
 
 #defining models here:
 
+#adding user auth:
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    _password_hash = db.Column(db.String(255), nullable=False)
+
+    # artists = db.relationship("Artists", backref="users")
+
+    @hybrid_property
+    def password_hash(self):
+        raise AttributeError('Password hashes may not be viewed.')
+
+    @password_hash.setter
+    def password_hash(self, password):
+        if not isinstance(password, str) or len(password) < 8:
+            raise ValueError("Password must have at least 8 characters.")
+        
+        password_hash = bcrypt.generate_password_hash(
+            password.encode('utf-8')
+        )
+        self._password_hash = password_hash.decode("utf-8")
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(
+            self._password_hash, password.encode("utf-8")
+        )
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.String(required=True)
+
 class Artists(db.Model):
     __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     info = db.Column(db.String(500), nullable=True)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+
+    user = db.relationship("User", backref="artists")
 
     @validates("name")
     def validate_name(self, key, name):
@@ -40,6 +77,7 @@ class Artists(db.Model):
 
 class ArtistSchema(Schema):
     id = fields.Int(dump_only=True)
+    user_id = fields.Int(dump_only=True)
     name = fields.String(required=True, )
     info = fields.String(allow_none=True)
 
@@ -86,7 +124,7 @@ class Collection(db.Model):
 class CollectionSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.String(required=True)
-    image_url = fields.String()
+    # image_url = fields.String()
     description = fields.String(allow_none=True)
 
     artist_id = fields.Int(required=True)
@@ -155,7 +193,7 @@ class ArtworkSchema(Schema):
     image_url = fields.String(required=True, allow_none=True)
     medium = fields.String(allow_none=True)
     description = fields.String(allow_none=True)
-    collection_id = fields.Int()
+    collection_id = fields.Int(required=True)
 
     collection = fields.Nested(lambda: CollectionSchema(exclude=("artworks",)), dump_only=True)
 
