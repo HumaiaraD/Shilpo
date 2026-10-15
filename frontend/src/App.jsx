@@ -37,10 +37,6 @@ function App() {
   
   return (
     <>
-      <div className="font-lavishly text-5xl">
-        <span className="logo-color">Shilpo</span>
-        <span className="ml-2 text-gray-400 text-sm">/she-eel-po</span>
-      </div>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
@@ -50,8 +46,6 @@ function App() {
           <Route path="/admin" element={<Admin user={user}/>} />
           <Route path="/artwork" element={<Artwork />} />
           <Route path="/about" element={<About />} />
-          {/* <Route path="/collection" element={<Collection />} />
-          <Route path="/artists" element={<Artists />} /> */}
         </Route>
       </Routes>
     </>

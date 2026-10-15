@@ -39,7 +39,7 @@ const About = () => {
             TailwindCSS, Flask, and PostgreSQL.
           </p>
           <p>For more details about this project. Check out my github repo for Shilpo.</p>
-          <a href="https://github.com/HumaiaraD/Shilpo" className='text-gray-400'>github link</a>
+          <a href="https://github.com/HumaiaraD/Shilpo" className=' text-gray-400 hover:text-black'>github link</a>
         </section>
 
         <section className="flex flex-col border-t border-stone-200 pt-8">
@@ -52,12 +52,12 @@ const About = () => {
           {/* Replace with your email address */}
           <a
             href="mailto:d.humaiara@gmail.com"
-            className="mt-4 inline-block text-base underline underline-offset-4 hover:text-stone-950"
+            className="mt-4 inline-block text-base underline underline-offset-4  text-gray-400 hover:text-black"
           >
             Email me
           </a>
-          <a href="https://www.humaiaradiea.com/" target='_blank' className='underline underline-offset-4'>My Portfolio Website</a>
-          <a href="https://github.com/HumaiaraD" target='_blank' className='underline underline-offset-4'>My github</a>
+          <a href="https://www.humaiaradiea.com/" target='_blank' className='underline underline-offset-4 text-gray-400 hover:text-black'>My Portfolio Website</a>
+          <a href="https://github.com/HumaiaraD" target='_blank' className='underline underline-offset-4 text-gray-400 hover:text-black'>My github</a>
         </section>
       </div>
     </main>

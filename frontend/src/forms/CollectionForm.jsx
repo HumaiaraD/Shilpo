@@ -54,30 +54,24 @@ const CollectionForm = ({addCollection, artists, collectionToEdit, updateCollect
          <form onSubmit={handleSubmit} id="collectionForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-2 md:m-20'>
             <h1 className='text-3xl m-auto'>Collection form</h1>
                    
-            <Label htmlFor="artistSelect" id='collectionSelectLabel'>Choose an artist:</Label>
+            <label htmlFor="artistSelect">Choose an artist:</label>
 
-                <Select aria-labelledby="collectionSelectLabel"
-                    value={String(artistId)}
-                    onValueChange={(value) => setArtistId(value)}
-                    name="artist_id"
-                    required
-                >
-                    <SelectTrigger id="artistSelect">
-                        <SelectValue placeholder="Select an artist" />
-                        <SelectIndicator />
-                    </SelectTrigger>
+            <select
+                id="artistSelect"
+                name="artist_id"
+                value={artistId}
+                onChange={(e) => setArtistId(e.target.value)}
+                required
+                className="w-full rounded-xl border border-stone-300 bg-white p-3 text-base text-stone-800"
+            >
+                <option value="">Select an artist</option>
 
-                    <SelectContent>
-                        {artists.map((artist) => (
-                            <SelectItem
-                                key={artist.id}
-                                value={String(artist.id)}
-                            >
-                                {artist.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                {artists.map((artist) => (
+                    <option key={artist.id} value={artist.id}>
+                        {artist.name}
+                    </option>
+                ))}
+            </select>
 
             <Label htmlFor="collectionTitle">Collection Title:</Label>
             <Input required type="text" id="collectionTitle" name="collectionTitle" value={title} onChange={(e) => setTitle(e.target.value)} />

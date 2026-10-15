@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { Draggable } from "gsap/Draggable";
 import useFetch from "../components/useFetch";
-import Search from "../components/Search"
+import Search from "../components/Search";
 import Display from "../components/Display";
 
+gsap.registerPlugin(Draggable);
 
-const Artwork = () => {
+function Artwork() {
+  const [search, setSearch] = useState("");
+  const [selectedArtwork, setSelectedArtwork] = useState(null);
+
+  const viewportRef = useRef(null);
+  const gridRef = useRef(null);
+  const lastButtonRef = useRef(null);
 
   const {
     items: artists,
@@ -24,36 +33,110 @@ const Artwork = () => {
     error: artworksError,
   } = useFetch("http://localhost:5555/artworks");
 
-  const error = artistsError || collectionsError || artworksError;
+  const loading =
+    artistsLoading || collectionsLoading || artworksLoading;
 
-  const [ search, setSearch ] = useState("");
-  const [selectedArtwork, setSelectedArtwork] = useState(null);
+  const error = artistsError || collectionsError || artworksError;
 
   const filteredArtworks = artworks.filter((artwork) => {
     const collection = collections.find(
-      (collection) => collection.id === artwork.collection_id
+      (item) => item.id === artwork.collection_id
     );
 
     const artist = artists.find(
-      (artist) => artist.id === collection?.artist_id
+      (item) => item.id === collection?.artist_id
     );
 
-    const text = [
+    return [
       artwork.title,
-      artist?.name,
+      artwork.medium,
       collection?.title,
-    ].join(" ").toLowerCase();
-
-    return text.includes(search.trim().toLowerCase());
+      artist?.name,
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(search.trim().toLowerCase());
   });
 
+  const columns = [0, 1, 2, 3].map((columnIndex) =>
+    filteredArtworks.filter((_, index) => index % 4 === columnIndex)
+  );
 
-  if (artistsLoading || collectionsLoading || artworksLoading) {
-    return <p>Loading...</p>;
+  // Reinitialize only when the displayed records change.
+  const galleryKey = JSON.stringify(
+    filteredArtworks.map((artwork) => artwork.id)
+  );
+
+  useEffect(() => {
+    if (loading || error || !gridRef.current) return;
+
+    const grid = gridRef.current;
+    const viewport = viewportRef.current;
+
+    let draggable;
+    let resizeObserver;
+
+    const ctx = gsap.context(() => {
+      function centerGrid() {
+        gsap.set(grid, {
+          x: (viewport.clientWidth - grid.offsetWidth) / 2,
+          y: (viewport.clientHeight - grid.offsetHeight) / 2,
+        });
+      }
+
+      centerGrid();
+
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      if (!reducedMotion) {
+        gsap.from(".art-card", {
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.7,
+          stagger: { amount: 0.6, from: "random" },
+          ease: "power3.out",
+        });
+      }
+
+      draggable = Draggable.create(grid, {
+        type: "x,y",
+        bounds: viewport,
+        edgeResistance: 0.85,
+        minimumMovement: 8,
+        dragClickables: true,
+        cursor: "grab",
+        activeCursor: "grabbing",
+      })[0];
+
+      resizeObserver = new ResizeObserver(() => {
+        draggable.applyBounds(viewport);
+      });
+
+      resizeObserver.observe(viewport);
+    }, viewport);
+
+    return () => {
+      resizeObserver?.disconnect();
+      draggable?.kill();
+      ctx.revert();
+    };
+  }, [loading, error, galleryKey]);
+
+  function openDetails(artwork, event) {
+    // Ignore clicks immediately following a drag.
+    if (Draggable.get(gridRef.current)?.timeSinceDrag() < 0.2) {
+      return;
+    }
+
+    lastButtonRef.current = event.currentTarget;
+    setSelectedArtwork(artwork);
   }
 
-  if (error) {
-    return <p className="text-red-600">{error.message}</p>;
+  function closeDetails() {
+    setSelectedArtwork(null);
+    lastButtonRef.current?.focus({ preventScroll: true });
   }
 
   const selectedCollection = collections.find(
@@ -64,69 +147,100 @@ const Artwork = () => {
     (artist) => artist.id === selectedCollection?.artist_id
   );
 
+  if (loading) {
+    return <p className="py-20 text-center">Loading artworks...</p>;
+  }
+
+  if (error) {
+    return (
+      <p className="py-20 text-center text-red-600">
+        {error.message}
+      </p>
+    );
+  }
+
   return (
-    <>
-  <main className="max-w-6xl mx-auto px-4 py-10">
-    <h1 className="text-4xl text-center mb-8">Explore Art</h1>
+    <main className="py-5 text-stone-800 z-0">
+      <header className="px-4 text-center">
 
-    {artworks.length === 0 && <p>No artworks yet.</p>}
+        <h1 className="text-xl sm:text-3xl">Explore Art</h1>
 
-    <div className="mb-6">
-      <Search search={search} setSearch={setSearch} />
-    </div>
+        <div className="mt-2 flex justify-center">
+          <Search search={search} setSearch={setSearch} />
+        </div>
 
-    {artworks.length > 0 && filteredArtworks.length === 0 && (
-      <p>No matching artworks found.</p>
-    )}
+        <p className="mb-6 text-sm text-stone-500">
+          Drag to explore · Click an artwork for details
+        </p>
+      </header>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {filteredArtworks.map((artwork) => {
-        const collection = collections.find(
-          (collection) => collection.id === artwork.collection_id
-        );
-
-        const artist = artists.find(
-          (artist) => artist.id === collection?.artist_id
-        );
-
-        return (
-          <article
-            key={artwork.id}
-            className="overflow-hidden rounded-2xl border border-stone-200"
+      {filteredArtworks.length === 0 ? (
+        <p className="py-16 text-center">No artworks found.</p>
+      ) : (
+        <div
+          ref={viewportRef}
+          className="relative mx-4 h-[70vh] min-h-100 overflow-hidden rounded-3xl bg-stone-100"
+        >
+          <div
+            ref={gridRef}
+            className="absolute left-0 top-0 flex w-max items-start gap-8 p-10 sm:gap-16"
           >
-            {artwork.image_url ? (
-              <button
-                type="button"
-                onClick={() => setSelectedArtwork(artwork)}
-                className="block w-full"
-                aria-label={`View details for ${artwork.title}`}
+            {columns.map((column, columnIndex) => (
+              <div
+                key={columnIndex}
+                className={`flex flex-col gap-10 ${
+                  columnIndex % 2 ? "pt-20" : ""
+                }`}
               >
-                <img
-                  src={artwork.image_url}
-                  alt={artwork.title}
-                  className="h-72 w-full object-cover"
-                />
-              </button>
-            ) : (
-              <div className="h-72 bg-stone-100 flex items-center justify-center">
-                No image
-              </div>
-            )}
+                {column.map((artwork) => (
+                  <button
+                    key={artwork.id}
+                    type="button"
+                    onClick={(event) => openDetails(artwork, event)}
+                    aria-label={`View details for ${artwork.title}`}
+                    className="art-card w-45 text-left focus-visible:outline-2 focus-visible:outline-offset-4 sm:w-60"
+                  >
+                    <div className="aspect-square overflow-hidden rounded-xl bg-white shadow-sm">
+                      {artwork.image_url ? (
+                        <img
+                          src={artwork.image_url}
+                          alt={artwork.title}
+                          draggable={false}
+                          className="pointer-events-none h-full w-full select-none object-contain p-3"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-sm">
+                          No image
+                        </div>
+                      )}
+                    </div>
 
-            <div className="p-5">
-              <h2 className="text-2xl mb-2">{artwork.title}</h2>
-              <p>Artist: {artist?.name ?? "Unknown artist"}</p>
-              <p>Collection: {collection?.title ?? "Unknown collection"}</p>
-              <p>Medium: {artwork.medium || "Not specified"}</p>
-              <p className="mt-3">{artwork.description}</p>
-            </div>
-          </article>
-        );
-      })}
-    </div>
-  </main>
-  </>
-);
+                    <h2 className="mt-3 text-lg">{artwork.title}</h2>
+                    
+
+                    {artwork.medium && (
+                      <p className="mt-1 text-sm text-stone-500">
+                        {artwork.medium}
+                      </p>
+                    )}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {selectedArtwork && (
+        <Display
+          artwork={selectedArtwork}
+          collection={selectedCollection}
+          artist={selectedArtist}
+          onClose={closeDetails}
+        />
+      )}
+    </main>
+  );
 }
 
 export default Artwork;

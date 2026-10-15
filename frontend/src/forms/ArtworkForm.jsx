@@ -43,7 +43,7 @@ const ArtworkForm = ({ addArtwork, collections, artworkToEdit, updateArtwork, on
             );
         setCollectionId("");
         setTitle("");
-        setImage_url(null);
+        setImage_url("");
         setMedium("");
         setDescription("");
         onSaved();
@@ -58,30 +58,24 @@ const ArtworkForm = ({ addArtwork, collections, artworkToEdit, updateArtwork, on
         <form onSubmit={handleSubmit} id="artworkForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-0 md:m-20'>
             <h1 className='text-3xl m-auto'>Artwork form</h1>
 
-          <Label htmlFor="collectionSelect" id='artworkSelectLabel'>Choose a collection:</Label>
+            <label htmlFor="collectionSelect">Choose a collection:</label>
 
-            <Select aria-labelledby="artworkSelectLabel"
-                value={String(collectionId)}
-                onValueChange={(value) => setCollectionId(value)}
+            <select
+                id="collectionSelect"
                 name="collection_id"
+                value={collectionId}
+                onChange={(e) => setCollectionId(e.target.value)}
                 required
+                className="w-full rounded-xl border border-stone-300 bg-white p-3 text-base text-stone-800"
             >
-                <SelectTrigger id="collectionSelect">
-                    <SelectValue placeholder="Select a collection" />
-                    <SelectIndicator />
-                </SelectTrigger>
+                <option value="">Select a collection</option>
 
-                <SelectContent>
-                    {collections.map((collection) => (
-                        <SelectItem
-                            key={collection.id}
-                            value={String(collection.id)}
-                        >
-                            {collection.title}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                {collections.map((collection) => (
+                    <option key={collection.id} value={collection.id}>
+                        {collection.title}
+                    </option>
+                ))}
+            </select>
 
             <Label htmlFor="artworkTitle">Artwork Title:</Label>
             <Input required type="text" value={title} id="artworkTitle" name="artworkTitle" onChange={(e) => setTitle(e.target.value)} />
