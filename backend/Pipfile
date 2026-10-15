@@ -12,6 +12,7 @@ psycopg = {extras = ["binary"], version = "*"}
 python-dotenv = "*"
 flask-cors = "*"
 flask-bcrypt = "*"
+gunicorn = "*"
 
 [dev-packages]
 

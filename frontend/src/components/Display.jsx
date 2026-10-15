@@ -61,7 +61,7 @@ function Display({ artwork, collection, artist, onClose }) {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-500">
+    <div className="fixed inset-0 z-1000">
       <div
         ref={backdropRef}
         onClick={onClose}

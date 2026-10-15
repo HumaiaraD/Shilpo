@@ -160,16 +160,16 @@ function Artwork() {
   }
 
   return (
-    <main className="py-5 text-stone-800 z-0">
-      <header className="px-4 text-center">
+    <main className="py-2 text-stone-800">
+      <header className="px-4 text-center ">
 
-        <h1 className="text-xl sm:text-3xl">Explore Art</h1>
+        <h1 className="text-2xl sm:text-xl">Explore Art</h1>
 
-        <div className="mt-2 flex justify-center">
+        <div className=" flex justify-center">
           <Search search={search} setSearch={setSearch} />
         </div>
 
-        <p className="mb-6 text-sm text-stone-500">
+        <p className="mb-2 text-sm text-stone-500">
           Drag to explore · Click an artwork for details
         </p>
       </header>
@@ -179,7 +179,7 @@ function Artwork() {
       ) : (
         <div
           ref={viewportRef}
-          className="relative mx-4 h-[70vh] min-h-100 overflow-hidden rounded-3xl bg-stone-100"
+          className="relative isolate z-0 mx-2 h-[95vh] min-h-150 overflow-hidden rounded-3xl bg-stone-100"
         >
           <div
             ref={gridRef}
