@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+.logo-color {
+  -webkit-text-stroke: 1px black;
+  animation: logo-color 2s ease-in-out infinite alternate;
+}
+
+@keyframes logo-color {
+  from {
+    color: black;
+  }
+  to {
+    color: white;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-color {
+    animation: none;
+  }
+}

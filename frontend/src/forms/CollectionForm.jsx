@@ -1,44 +1,108 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from "../components/tailgrids/core/Input";
+import { Button } from '../components/tailgrids/core/Button';
+import { Select, SelectTrigger, SelectValue, SelectIndicator, SelectContent, SelectItem } from '../components/tailgrids/core/Select';
+import { Label } from '../components/tailgrids/core/Label';
 
+const CollectionForm = ({addCollection, artists, collectionToEdit, updateCollection, onSaved}) => {
 
-const CollectionForm = () => {
-
-    const [artist, setArtist] = useState([]);
     const [artistId, setArtistId] = useState('');
 
+    const [ title, setTitle ] = useState("");
+    const [ description, setDescription ] = useState("");
+    const [ image_url, setImage_url ] = useState("");
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+            setTitle(collectionToEdit?.title ?? "");
+            setDescription(collectionToEdit?.description ?? "");
+            setImage_url(collectionToEdit?.image_url ?? "");
+            setArtistId(collectionToEdit?.artist_id ?? "");
+            setError("");
+        }, [collectionToEdit]);
+    
+
+   async function handleSubmit(e) {
+        e.preventDefault();
+        setError("");
+
+        const collectionData = { title, description, artist_id:Number(artistId)};
+
+        try {
+            if (collectionToEdit) {
+            await updateCollection(collectionToEdit.id, collectionData);
+        } else {
+            await addCollection(collectionData);
+        }
+            alert(
+            collectionToEdit
+                ? "Collection updated successfully!"
+                : "Collection added successfully!"
+        );
+            setTitle("");
+            setDescription("");
+            setImage_url("");
+            setArtistId("");
+            onSaved();
+        } catch (err) {
+            setError(err.message);
+        }
+        }
   return (
     <>
-         <form id="collectionForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-2 md:m-20'>
+         <form onSubmit={handleSubmit} id="collectionForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-2 md:m-20'>
             <h1 className='text-3xl m-auto'>Collection form</h1>
                    
-          <label htmlFor="artistSelect">Choose an artist:</label>
-          <select value={artistId} onChange={(e) => setArtistId(e.target.value)} className='border-gray-300 rounded-xl'
-           id="artistSelect" name="artist_id"> 
-                 
-            <option value="">Select an artist</option>
+            <Label htmlFor="artistSelect" id='collectionSelectLabel'>Choose an artist:</Label>
 
-              {artist.map((artist) => (
-                <option key={artist.id} value={artist.id}>
-                  {artist.name}
-                </option>
-              ))}            
-          </select> 
+                <Select aria-labelledby="collectionSelectLabel"
+                    value={String(artistId)}
+                    onValueChange={(value) => setArtistId(value)}
+                    name="artist_id"
+                    required
+                >
+                    <SelectTrigger id="artistSelect">
+                        <SelectValue placeholder="Select an artist" />
+                        <SelectIndicator />
+                    </SelectTrigger>
 
-          <label htmlFor="collectionTitle">Collection Title:</label>
-          <Input type="text" id="collectionTitle" name="collectionTitle" />
+                    <SelectContent>
+                        {artists.map((artist) => (
+                            <SelectItem
+                                key={artist.id}
+                                value={String(artist.id)}
+                            >
+                                {artist.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
 
-          <label htmlFor="collectionDescription">Collection Description:</label>
-          <textarea id="collectionDescription" name="collectionDescription" className='border-gray-300 rounded-xl focus:border-indigo-300 focus:ring-4 focus:ring-blue-300/30'/>
+            <Label htmlFor="collectionTitle">Collection Title:</Label>
+            <Input required type="text" id="collectionTitle" name="collectionTitle" value={title} onChange={(e) => setTitle(e.target.value)} />
 
-          <label htmlFor="collectionImage">Collection Image:</label>
-          <Input type="url" id="collectionImage" name="collectionImage" />
+            <Label htmlFor="collectionDescription">Collection Description:</Label>
+            <textarea id="collectionDescription" name="collectionDescription" value={description} onChange={(e) => setDescription(e.target.value)}
+            className='border-gray-300 rounded-xl focus:border-indigo-300 focus:ring-4 focus:ring-blue-300/30'/>
 
-            <button type="submit" className='w-30 m-auto bg-green-200 p-3 rounded-3xl text-gray-600'>Add Artist</button>
+            {error && <p className="text-red-600">{error}</p>}
+
+            <Button
+                type="submit"
+                className=" m-auto bg-green-200 hover:bg-green-300 p-3 rounded-3xl text-gray-600"
+            >
+                {collectionToEdit ? "Save Changes" : "Add Collection"}
+            </Button>
+
+            {collectionToEdit && (
+                <Button type="button" onClick={onSaved}>
+                    Cancel
+                </Button>
+            )}
 
         </form>
     </>
   )
-
+}
 export default CollectionForm

@@ -1,28 +1,56 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import Admin from './pages/Admin'
 import Artwork from './pages/Artwork'
-import Contact from './pages/Contact'
-// import Collection from './pages/Collection'
-// import Artists from './pages/Artists'
+import About from './pages/About'
+import Login from './pages/Login'
+import User from './pages/User'
+import Signup from "./pages/Signup";
+
+
+gsap.registerPlugin(useGSAP);
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuhtLoading] = useState(true);
+  
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const response = await fetch("http://localhost:5555/check_session",{ credentials: "include" })
+        if (response.ok) {
+          const userData = await response.json()
+          setUser(userData)
+        }
+      } catch (error) {
+        console.error("Session check failed:", error)
+      } finally {
+        setAuhtLoading(false)
+      }
+      
+    }
+    checkSession()
+  }, [])
 
+  
   return (
     <>
-      <div className='font-lavishly text-5xl'>
-        Shilpo <span className='text-blue-400 text-sm'>/she-eel-po</span> 
+      <div className="font-lavishly text-5xl">
+        <span className="logo-color">Shilpo</span>
+        <span className="ml-2 text-gray-400 text-sm">/she-eel-po</span>
       </div>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/login"  element={<Login setUser={setUser} />} />
+          <Route path="/user" element={authLoading ? <p>Loading...</p> : <User user={user} setUser={setUser} />} />
+          <Route path="/signup" element={<Signup setUser={setUser} />} />
+          <Route path="/admin" element={<Admin user={user}/>} />
           <Route path="/artwork" element={<Artwork />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
           {/* <Route path="/collection" element={<Collection />} />
           <Route path="/artists" element={<Artists />} /> */}
         </Route>

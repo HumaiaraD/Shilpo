@@ -1,23 +1,69 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from "../components/tailgrids/core/Input";
+import { Label } from "../components/tailgrids/core/Label";
+import { Button } from "../components/tailgrids/core/Button";
 
-const ArtistForm = () => {
+const ArtistForm = ({artistToEdit, addArtist, updateArtist, onSaved}) => {
+    const [name, setName ] = useState("");
+    const [info, setInfo] = useState("");
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        setName(artistToEdit?.name ?? "");
+        setInfo(artistToEdit?.info ?? "");
+        setError("");
+    }, [artistToEdit]);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError("");
+
+        const artistData = { name, info };
+
+        try {
+        if (artistToEdit) {
+            await updateArtist(artistToEdit.id, artistData);
+        } else {
+            await addArtist(artistData);
+        } 
+        alert (
+            artistToEdit
+            ? "Artist updated successfully!"
+            : "Artist added successfully!"
+        )
+
+        setName("");
+        setInfo("");
+        onSaved();
+        } catch (err) {
+        setError(err.message);
+        }
+  }
     
   return (
     <>
         <section>
-            <form id="artistForm" className='flex flex-col sm:gap-2 md:gap-4 sm:m-2 md:m-20'>
+            <form onSubmit={handleSubmit} id="artistForm" className='flex flex-col sm:gap-2 md:gap-4 sm:m-2 md:m-20'>
                 <h1 className='text-3xl m-auto'>Artist form</h1>
 
-                <label htmlFor="artistName">Artist Name:</label>
-                <Input type="text" id="artistName" name="artistName" />
+                <Label htmlFor="artistName">Artist Name:</Label>
+                <Input type="text" value={name} id="artistName" name="artistName" onChange={(e) => setName(e.target.value)} />
 
-                <label htmlFor="artistInfo">Artist Info:</label>
-                <Input type="text" id="artistInfo" name="artistInfo" />
+                <Label htmlFor="artistInfo">Artist Info:</Label>
+                <Input type="text" value={info} id="artistInfo" name="artistInfo" onChange={(e) => setInfo(e.target.value)} />
 
-                <button type="submit" className='w-30 m-auto bg-green-200 p-3 rounded-3xl text-gray-600'>Add Artist</button>
+                {error && <p>{error}</p>}
 
+                <Button type="submit" className=" m-auto bg-green-200 hover:bg-green-300 p-3 rounded-3xl text-gray-600">
+                    {artistToEdit ? "Save Changes" : "Add Artist"}
+                </Button>
+
+                {artistToEdit && (
+                    <Button type="button" onClick={onSaved}>
+                    Cancel
+                    </Button>
+                )}
             </form>
         </section>
     </>

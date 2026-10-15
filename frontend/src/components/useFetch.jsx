@@ -1,0 +1,134 @@
+import React, { useEffect, useState } from 'react'
+
+const useFetch = (endpoint) => {
+    const [items, setItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);   
+
+    useEffect(() => {
+        fetch(endpoint, {credentials: "include"})
+            .then((res) => {
+                if(!res.ok) {throw new Error("Failed to fetch items")}
+                return res.json();
+            })
+            .then((items) => {
+                setItems(items);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setError(error);
+                setLoading(false);
+            })
+    }, [endpoint])
+
+    async function addItem(newItem) {
+        setError(null);
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newItem),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || JSON.stringify(data.errors) || "Failed to add item."
+                );
+            }
+
+            setItems((currentItems) => [...currentItems, data]);
+            return data;
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    }
+
+    async function updateItem(id, updatedData) {
+        setError(null);
+
+        try {
+            const response = await fetch(`${endpoint}/${id}`, {
+                method: "PATCH",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error ||
+                    JSON.stringify(data.errors) ||
+                    "Failed to update item."
+                );
+            }
+
+            setItems((currentItems) =>
+                currentItems.map((item) =>
+                    item.id === data.id ? data : item
+                )
+            );
+
+            return data;
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    }
+
+    async function deleteItem(id) {
+        setError(null);
+
+        try {
+            const response = await fetch(`${endpoint}/${id}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || "Failed to delete item.");
+            }
+
+            setItems((currentItems) =>
+                currentItems.filter((item) => item.id !== id)
+            );
+        } catch (err) {
+            setError(err);
+            throw err;
+        }
+    }
+
+    // async function refreshItems() {.  *******-   add later   -*****
+    //     try {
+    //         const response = await fetch(endpoint, {
+    //             credentials: "include",
+    //         })
+    //         if (!response.ok) {
+    //             throw new Error("Failed to refresh items.");
+    //         }
+
+    //         const data = await response.json();
+    //         setItems(data)
+    //         setError(null);
+    //     } catch(err){
+    //         setError(err);
+    //         throw err;
+    //     }
+    // }
+
+  return { items, loading, error, addItem, updateItem, deleteItem,}
+    
+}
+
+export default useFetch

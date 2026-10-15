@@ -1,43 +1,115 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Input } from "../components/tailgrids/core/Input";
+import { Label } from "../components/tailgrids/core/Label";
+import { Button } from "../components/tailgrids/core/Button";
+import { Select, SelectContent, SelectItem, SelectValue, SelectIndicator, SelectTrigger  } from "../components/tailgrids/core/Select";
 
-const ArtworkForm = () => {
+const ArtworkForm = ({ addArtwork, collections, artworkToEdit, updateArtwork, onSaved}) => {
 
     const [collectionId, setCollectionId] = useState("");
-    const [collections, setCollections] = useState([]);
+
+    const [ title, setTitle ] = useState("");
+    const [ image_url, setImage_url ] = useState("");
+    const [ medium, setMedium ] = useState("");
+    const [ description, setDescription ] = useState("");
+    const [error, setError ] = useState("");
+
+    useEffect(() => {
+        setCollectionId(artworkToEdit?.collection_id ?? "");
+        setTitle(artworkToEdit?.title ?? "");
+        setImage_url(artworkToEdit?.image_url ?? "");
+        setMedium(artworkToEdit?.medium ?? "");
+        setDescription(artworkToEdit?.description ?? "");
+        setError("");
+    }, [artworkToEdit]);
+
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError("");
+
+        const artworkData = { title, image_url, medium, description, collection_id:Number(collectionId)};
+
+        try {
+            if (artworkToEdit) {
+                await updateArtwork(artworkToEdit.id, artworkData)
+            } else {
+                await addArtwork(artworkData);
+            } alert(
+                artworkToEdit
+                    ? "Artwork updated successfully!"
+                    : "Artwork added successfully!"
+            );
+        setCollectionId("");
+        setTitle("");
+        setImage_url(null);
+        setMedium("");
+        setDescription("");
+        onSaved();
+        }         
+        catch (error) {
+            setError(error.message);
+        }
+    }
     
   return (
     <>
-        <form id="artworkForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-0 md:m-20'>
+        <form onSubmit={handleSubmit} id="artworkForm" className='flex flex-col  sm:gap-2 md:gap-4 sm:m-0 md:m-20'>
             <h1 className='text-3xl m-auto'>Artwork form</h1>
 
-            <label htmlFor="collectionSelect">Choose an collection:</label>
-            <select required value={collectionId} onChange={(e) => setCollectionId(e.target.value)} 
-            id="collectionSelect" name="collection_id" className="border-gray-300 rounded-xl">
+          <Label htmlFor="collectionSelect" id='artworkSelectLabel'>Choose a collection:</Label>
 
-                <option value="">Select a collection:</option>
+            <Select aria-labelledby="artworkSelectLabel"
+                value={String(collectionId)}
+                onValueChange={(value) => setCollectionId(value)}
+                name="collection_id"
+                required
+            >
+                <SelectTrigger id="collectionSelect">
+                    <SelectValue placeholder="Select a collection" />
+                    <SelectIndicator />
+                </SelectTrigger>
 
-                {collections.map((collection) => (
-                    <option key={collection.id} value={collection.id}>
-                    {collection.title}
-                    </option>
-                ))}          
-            </select> 
+                <SelectContent>
+                    {collections.map((collection) => (
+                        <SelectItem
+                            key={collection.id}
+                            value={String(collection.id)}
+                        >
+                            {collection.title}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
 
-            <label htmlFor="artworkTitle">Artwork Title:</label>
-            <Input type="text" id="artworkTitle" name="artworkTitle" />
+            <Label htmlFor="artworkTitle">Artwork Title:</Label>
+            <Input required type="text" value={title} id="artworkTitle" name="artworkTitle" onChange={(e) => setTitle(e.target.value)} />
 
-            <label htmlFor="artworkImage">Artwork Image:</label>
-            <Input type="url" id="artworkImage" name="artworkImage" />
+            <Label htmlFor="artworkImage">Artwork Image:</Label>
+            <Input type="url" value={image_url} id="artworkImage" name="artworkImage" onChange={(e) => setImage_url(e.target.value)} />
 
-            <label htmlFor="artworkMedium">Artwork Medium:</label>
-            <Input type="text" id="artworkMedium" name="artworkMedium" />
+            <Label htmlFor="artworkMedium">Artwork Medium:</Label>
+            <Input type="text" value={medium} id="artworkMedium" name="artworkMedium" onChange={(e) => setMedium(e.target.value)}  />
 
-            <label htmlFor="artworkDescription">Artwork Description:</label>
-            <textarea id="artworkDescription" name="artworkDescription" className='border-gray-300 rounded-2xl focus:border-indigo-300 focus:ring-4 focus:ring-blue-300/30' />
+            <Label htmlFor="artworkDescription">Artwork Description:</Label>
+            <textarea id="artworkDescription" value={description} name="artworkDescription" onChange={(e) => setDescription(e.target.value)} 
+            className='border-gray-300 rounded-2xl focus:border-indigo-300 focus:ring-4 focus:ring-blue-300/30' />
 
-            <button type="submit" className='w-30 m-auto bg-green-200 p-3 rounded-3xl text-gray-600'>Add Artist</button>
+            {error && <p className="text-red-600">{error}</p>}
+
+            <Button
+                type="submit"
+                className="w-30 m-auto bg-green-200 hover:bg-green-300 p-3 rounded-3xl text-gray-600"
+            >
+                {artworkToEdit ? "Save Changes" : "Add Artwork"}
+            </Button>
+
+            {artworkToEdit && (
+                <Button type="button" onClick={onSaved}>
+                    Cancel
+            </Button>
+            )}
         </form>
     </>
   )
