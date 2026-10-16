@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { Input } from "../components/tailgrids/core/input";
 import { Label } from "../components/tailgrids/core/label";
 import { Button } from "../components/tailgrids/core/button";
-import { Select, SelectContent, SelectItem, SelectValue, SelectIndicator, SelectTrigger  } from "../components/tailgrids/core/Select";
 
 const ArtworkForm = ({ addArtwork, collections, artworkToEdit, updateArtwork, onSaved}) => {
 

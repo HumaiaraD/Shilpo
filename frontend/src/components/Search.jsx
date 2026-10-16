@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Input } from './tailgrids/core/Input'
-import { Label } from './tailgrids/core/Label'
+import { Input } from './tailgrids/core/input'
+import { Label } from './tailgrids/core/label'
 
 
 const Search = ({search, setSearch}) => {
