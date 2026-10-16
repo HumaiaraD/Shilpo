@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Input } from "../components/tailgrids/core/Input";
-import { Label } from "../components/tailgrids/core/Label";
-import { Button } from "../components/tailgrids/core/Button";
+import { Input } from "../components/tailgrids/core/input";
+import { Label } from "../components/tailgrids/core/label";
+import { Button } from "../components/tailgrids/core/button";
 import { Link } from 'react-router-dom';
 
 

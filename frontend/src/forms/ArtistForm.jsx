@@ -1,8 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Input } from "../components/tailgrids/core/Input";
-import { Label } from "../components/tailgrids/core/Label";
-import { Button } from "../components/tailgrids/core/Button";
+import { Input } from "../components/tailgrids/core/input";
+import { Label } from "../components/tailgrids/core/label";
+import { Button } from "../components/tailgrids/core/button";
 
 const ArtistForm = ({artistToEdit, addArtist, updateArtist, onSaved}) => {
     const [name, setName ] = useState("");

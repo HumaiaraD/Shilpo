@@ -1,9 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import { Input } from "../components/tailgrids/core/Input";
-import { Button } from '../components/tailgrids/core/Button';
-import { Select, SelectTrigger, SelectValue, SelectIndicator, SelectContent, SelectItem } from '../components/tailgrids/core/Select';
-import { Label } from '../components/tailgrids/core/Label';
+import { Input } from "../components/tailgrids/core/input";
+import { Button } from '../components/tailgrids/core/button';
+import { Label } from '../components/tailgrids/core/label';
 
 const CollectionForm = ({addCollection, artists, collectionToEdit, updateCollection, onSaved}) => {
 
