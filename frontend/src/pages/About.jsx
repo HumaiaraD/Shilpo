@@ -17,7 +17,7 @@ const About = () => {
             Shilpo brings artists, collections, and artworks together in
             one place. It helps artists and small collection managers
             spend less time searching through folders and spreadsheets
-            and more time focusing on their work.
+            and more time focusing on their work. "Shilpo" means "Art" in Bangla.
           </p>
           <p className="mt-4 text-base leading-relaxed">
             Visitors can explore the artwork gallery, while registered
@@ -29,7 +29,7 @@ const About = () => {
         <section className="border-t border-stone-200 pt-8">
           <h2 className="mb-3 text-3xl">Meet the Creator</h2>
           <p className="text-base leading-relaxed">
-            Hi, I’m Humaiara Diea, a self-taught artist exploring the
+            Hi, I'm Humaiara Diea, a full stack developer exploring the
             connection between art, design, and code. Creating an art
             portfolio sparked my interest in web development, and Shilpo
             brings those interests together.

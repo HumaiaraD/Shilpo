@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Admin from "./Admin";
 import { useNavigate } from "react-router-dom";
 import useFetch from "../components/useFetch";
 
@@ -126,13 +125,13 @@ useGSAP(() => {
 </header>
     
         <section className="max-w-sm mx-auto my-10 text-center">
-        <h1 className="text-3xl mb-6">My Account</h1>
+        <h1 className="text-xl mb-6">My Account</h1>
 
         {user ? (
             <div className="flex flex-col">
-            <p className="mb-4">Welcome, {user.username}!</p>
-            <Link to="/admin">Create/Edit Portfolio</Link>
-            <button type="button" onClick={handleLogout}>
+            <p className="mb-4 text-3xl">Welcome, {user.username}!</p>
+            <Link to="/admin" className="text-2xl m-2 underline hover:text-gray-400">Create/Edit Portfolio</Link>
+            <button type="button" onClick={handleLogout} className="m-2 underline hover:text-gray-400">
                 Logout
             </button>
             </div>
