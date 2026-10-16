@@ -1,25 +1,79 @@
 import React, { useEffect, useState } from 'react'
 
-const useFetch = (endpoint) => {
+const useFetch = (endpoint, page = null, perPage = 12) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);   
+    const [error, setError] = useState(null);  
+    const [pagination, setPagination] = useState(null); 
 
+    // useEffect(() => {
+    //     fetch(endpoint, {credentials: "include"})
+    //         .then((res) => {
+    //             if(!res.ok) {throw new Error("Failed to fetch items")}
+    //             return res.json();
+    //         })
+    //         .then((items) => {
+    //             setItems(items);
+    //             setLoading(false);
+    //         })
+    //         .catch((error) => {
+    //             setError(error);
+    //             setLoading(false);
+    //         })
+    // }, [endpoint])
     useEffect(() => {
-        fetch(endpoint, {credentials: "include"})
-            .then((res) => {
-                if(!res.ok) {throw new Error("Failed to fetch items")}
-                return res.json();
-            })
-            .then((items) => {
-                setItems(items);
-                setLoading(false);
-            })
-            .catch((error) => {
-                setError(error);
-                setLoading(false);
-            })
-    }, [endpoint])
+        const controller = new AbortController();
+
+        async function fetchItems(){
+            setLoading(true);
+            setError(null);
+
+            try {
+                const url = new URL(endpoint);
+
+                if (page != null) {
+                    url.searchParams.set("page", String(page));
+                    url.searchParams.set("per_page", String(perPage));
+                }
+                const response = await fetch(url.toString(), {
+                    credentials: "include",
+                    signal: controller.signal,
+                });
+                if (!response.ok){
+                    throw new Error("Failed to fecth items.")
+                }
+                const data = await response.json();
+
+                if (controller.signal.aborted) return;
+
+                if (Array.isArray(data)){
+                    setItems(data);
+                    setPagination(null);
+                } else {
+                    setItems(data.items);
+                    setPagination({
+                        page: data.page,
+                        perPage: data.per_page,
+                        total: data.total,
+                        totalPages: data.total_pages,
+                        hasNext: data.has_next,
+                        hasPrev: data.has_prev,
+                    })
+                }
+
+            } catch (err) {
+                if (err.name != "AbortError"){
+                    setError(err);
+                }
+            } finally {
+                if (!controller.signal.aborted){
+                    setLoading(false);
+                }
+            }
+        }
+        fetchItems();
+        return () => controller.abort();
+    }, [endpoint, page, perPage]);
 
     async function addItem(newItem) {
         setError(null);
@@ -127,7 +181,7 @@ const useFetch = (endpoint) => {
     //     }
     // }
 
-  return { items, loading, error, addItem, updateItem, deleteItem,}
+  return { items, loading, error, pagination, addItem, updateItem, deleteItem,}
     
 }
 

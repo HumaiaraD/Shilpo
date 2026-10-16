@@ -231,10 +231,42 @@ def delete_collection(id):
 #--------------------------------------------------------------------------------------------------------------
 @app.route("/artworks", methods=["GET"])
 def get_all_artworks():
-    artworks = Artworks.query.all()
-    body = ArtworkSchema(many=True).dump(artworks)
+    # artworks = Artworks.query.all()
+    # body = ArtworkSchema(many=True).dump(artworks)
 
-    return make_response(body, 200)
+    # return make_response(body, 200)
+    query = Artworks.query.order_by(Artworks.id.desc())
+    
+    if "page" not in request.args and "per_page" not in request.args:
+        return ArtworkSchema(many=True).dump(query.all()), 200
+    
+    try:
+        page = int(request.args.get("page", "1"))
+        per_page = int(request.args.get("per_page", "12"))
+    except ValueError:
+        return {"error": "page and per_page must be integers. "}, 400
+    
+    if page < 1 or not 1 <=  per_page <= 100:
+        return {
+            "error": "page must be positive; per_page must be between 1 and 100."
+        }, 400
+    
+    pagination = query.paginate(
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+    
+    return {
+        "items": ArtworkSchema(many=True).dump(pagination.items),
+        "page": pagination.page,
+        "per_page": pagination.per_page,
+        "total": pagination.total,
+        "total_pages": pagination.pages,
+        "has_next": pagination.has_next,
+        "has_prev":pagination.has_prev,
+    }, 200
+    
 
 @app.route("/artworks/<int:id>", methods=["GET"])
 def get_artwork(id):
@@ -243,6 +275,7 @@ def get_artwork(id):
         return make_response({"error": "Artwork not found"}, 404)
     body = ArtworkSchema().dump(artwork)
     return make_response(body, 200)
+
 
 @app.route("/artworks", methods=["POST"])
 def create_artwork():
