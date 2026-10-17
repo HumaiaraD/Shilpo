@@ -27,7 +27,7 @@ migrate = Migrate(app, db)
 db.init_app(app)
 bcrypt.init_app(app)
 
-CORS(app, origins=["http://localhost:5173", "https://shilpo-one.vercel.app/"], supports_credentials=True)
+CORS(app, origins=["http://localhost:5173", "https://shilpo-one.vercel.app"], supports_credentials=True)
 
 # Define Routes here
 @app.route("/", methods=["GET"])
