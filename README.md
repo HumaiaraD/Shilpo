@@ -130,7 +130,7 @@ pipenv run flask --app app run --port 5555 --debug
 The backend is available at:
 
 ```text
-http://localhost:5555
+---http://localhost:5555
 ```
 
 ### 6. Start React

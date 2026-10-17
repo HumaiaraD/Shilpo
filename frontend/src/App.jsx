@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     async function checkSession() {
       try {
-        const response = await fetch("http://localhost:5555/check_session",{ credentials: "include" })
+        const response = await fetch("https://shilpo-api.onrender.com/check_session",{ credentials: "include" })
         if (response.ok) {
           const userData = await response.json()
           setUser(userData)

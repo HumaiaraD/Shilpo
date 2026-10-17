@@ -75,54 +75,54 @@ useGSAP(() => {
     ease: "sine.inOut",
   });
 }, { scope: headerRef });
+
+
+
   return (
     <>
-        <header
-  ref={headerRef}
-  className="overflow-hidden bg-stone-100 px-6 py-12 text-stone-800"
->
-  <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
-    <div>
-      <p className="mb-3 text-xs uppercase tracking-[0.2em]">
-        Your Creative Space
-      </p>
+        <header ref={headerRef} className="overflow-hidden bg-stone-100 px-6 py-12 text-stone-800">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2">
+            <div>
+              <p className="mb-3 text-xs uppercase tracking-[0.2em]">
+                Your Creative Space
+              </p>
 
-      <h1 className="text-4xl sm:text-6xl">
-        {user ? `Welcome, ${user.username}` : "A home for your art."}
-      </h1>
+              <h1 className="text-4xl sm:text-6xl">
+                {user ? `Welcome, ${user.username}` : "A home for your art."}
+              </h1>
 
-      <p className="mt-5 max-w-md text-base leading-relaxed text-stone-600">
-        Collect your ideas. Organize your work. Keep creating.
-      </p>
-    </div>
+              <p className="mt-5 max-w-md text-base leading-relaxed text-stone-600">
+                Collect your ideas. Organize your work. Keep creating.
+              </p>
+            </div>
 
-    <div className="relative mx-auto h-80 w-full max-w-md">
-      <div className="absolute left-[5%] top-12 w-[36%] -rotate-12">
-        <img
-          src="/wheel/1.jpg"
-          alt="Featured artwork"
-          className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
-        />
-      </div>
+            <div className="relative mx-auto h-80 w-full max-w-md">
+              <div className="absolute left-[5%] top-12 w-[36%] -rotate-12">
+                <img
+                  src="/wheel/1.jpg"
+                  alt="Featured artwork"
+                  className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
+                />
+              </div>
 
-      <div className="absolute right-[5%] top-8 w-[36%] rotate-12">
-        <img
-          src="/wheel/2.jpg"
-          alt="Featured artwork"
-          className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
-        />
-      </div>
+              <div className="absolute right-[5%] top-8 w-[36%] rotate-12">
+                <img
+                  src="/wheel/2.jpg"
+                  alt="Featured artwork"
+                  className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
+                />
+              </div>
 
-      <div className="absolute left-[32%] top-20 z-10 w-[36%]">
-        <img
-          src="/wheel/3.jpg"
-          alt="Featured artwork"
-          className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
-        />
-      </div>
-    </div>
-  </div>
-</header>
+              <div className="absolute left-[32%] top-20 z-10 w-[36%]">
+                <img
+                  src="/wheel/3.jpg"
+                  alt="Featured artwork"
+                  className="floating-art aspect-3/4 w-full rounded-xl border-8 border-white object-cover shadow-xl"
+                />
+              </div>
+            </div>
+          </div>
+        </header>
     
         <section className="max-w-sm mx-auto my-10 text-center">
         <h1 className="text-xl mb-6">My Account</h1>
