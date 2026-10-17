@@ -12,11 +12,11 @@ const Admin = ({user}) => {
 
 
   const {items: artists, addItem: addArtist, deleteItem: deleteArtist, updateItem: updateArtist,} 
-        = useFetch("http://localhost:5555/artists");
+        = useFetch("https://shilpo-api.onrender.com/artists");
   const {items: collections, addItem: addCollection, deleteItem: deleteCollection, updateItem: updateCollection, } 
-        = useFetch("http://localhost:5555/collections");
+        = useFetch("https://shilpo-api.onrender.com/collections");
   const {items: artworks, addItem: addArtwork, deleteItem: deleteArtwork, updateItem: updateArtwork,} 
-        = useFetch("http://localhost:5555/artworks");
+        = useFetch("https://shilpo-api.onrender.com/artworks");
 
   const [artistToEdit, setArtistToEdit] = useState(null);
   const [collectionToEdit, setCollectionToEdit] = useState(null);

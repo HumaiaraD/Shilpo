@@ -12,16 +12,16 @@ function User({ user, setUser }) {
     const navigate = useNavigate();
 
     const { items: artists, loading: artistsLoading, error: artistsError } =
-    useFetch("http://localhost:5555/artists");
+    useFetch("https://shilpo-api.onrender.com/artists");
 
     const {
     items: collections,
     loading: collectionsLoading,
     error: collectionsError,
-    } = useFetch("http://localhost:5555/collections");
+    } = useFetch("https://shilpo-api.onrender.com/collections");
 
     const { items: artworks, loading: artworksLoading, error: artworksError } =
-    useFetch("http://localhost:5555/artworks");
+    useFetch("https://shilpo-api.onrender.com/artworks");
 
     const myArtists = artists.filter(
     (artist) => artist.user_id === user?.id
@@ -42,7 +42,7 @@ function User({ user, setUser }) {
 
     async function handleLogout() {
         try {
-        const response = await fetch("http://localhost:5555/logout", {
+        const response = await fetch("https://shilpo-api.onrender.com/logout", {
             method: "DELETE",
             credentials: "include",
         });

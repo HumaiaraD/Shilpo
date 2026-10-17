@@ -15,6 +15,10 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ["DATABASE_URL"]
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE="None",
+)
 
 app.register_blueprint(auth_bp)
 
@@ -23,7 +27,7 @@ migrate = Migrate(app, db)
 db.init_app(app)
 bcrypt.init_app(app)
 
-CORS(app, origins=["http://localhost:5173"], supports_credentials=True)
+CORS(app, origins=["http://localhost:5173", "https://shilpo-one.vercel.app/"], supports_credentials=True)
 
 # Define Routes here
 @app.route("/", methods=["GET"])

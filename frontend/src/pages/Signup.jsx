@@ -20,7 +20,7 @@ const Signup = ({setUser}) => {
         setError("");
 
         try {
-            const response = await fetch("http://localhost:5555/signup", {
+            const response = await fetch("https://shilpo-api.onrender.com/signup", {
                 method: "POST",
                 credentials: "include",
                 headers: {

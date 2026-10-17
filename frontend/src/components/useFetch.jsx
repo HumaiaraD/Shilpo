@@ -6,21 +6,6 @@ const useFetch = (endpoint, page = null, perPage = 12) => {
     const [error, setError] = useState(null);  
     const [pagination, setPagination] = useState(null); 
 
-    // useEffect(() => {
-    //     fetch(endpoint, {credentials: "include"})
-    //         .then((res) => {
-    //             if(!res.ok) {throw new Error("Failed to fetch items")}
-    //             return res.json();
-    //         })
-    //         .then((items) => {
-    //             setItems(items);
-    //             setLoading(false);
-    //         })
-    //         .catch((error) => {
-    //             setError(error);
-    //             setLoading(false);
-    //         })
-    // }, [endpoint])
     useEffect(() => {
         const controller = new AbortController();
 
@@ -163,23 +148,6 @@ const useFetch = (endpoint, page = null, perPage = 12) => {
         }
     }
 
-    // async function refreshItems() {.  *******-   add later   -*****
-    //     try {
-    //         const response = await fetch(endpoint, {
-    //             credentials: "include",
-    //         })
-    //         if (!response.ok) {
-    //             throw new Error("Failed to refresh items.");
-    //         }
-
-    //         const data = await response.json();
-    //         setItems(data)
-    //         setError(null);
-    //     } catch(err){
-    //         setError(err);
-    //         throw err;
-    //     }
-    // }
 
   return { items, loading, error, pagination, addItem, updateItem, deleteItem,}
     
