@@ -18,6 +18,10 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     _password_hash = db.Column(db.String(255), nullable=False)
 
+    # adding email and verifications
+    email = db.Column(db.String(100), nullable=True, unique=True)
+    email_verified = db.Column(db.Boolean, default=False, nullable=False)
+
     # artists = db.relationship("Artists", backref="users")
 
     @hybrid_property
@@ -28,6 +32,9 @@ class User(db.Model):
     def password_hash(self, password):
         if not isinstance(password, str) or len(password) < 8:
             raise ValueError("Password must have at least 8 characters.")
+
+        if len(password.encode("utf-8")) > 72:
+            raise ValueError("Password must not exceed 72 bytes.")
         
         password_hash = bcrypt.generate_password_hash(
             password.encode('utf-8')
@@ -42,6 +49,9 @@ class User(db.Model):
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.String(required=True)
+
+    email = fields.Email()
+    email_verified = fields.Boolean(dump_only=True)
 
 class Artists(db.Model):
     __tablename__ = 'artists'

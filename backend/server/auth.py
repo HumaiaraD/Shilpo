@@ -1,6 +1,7 @@
 from flask import Blueprint, request, session
 from sqlalchemy.exc import IntegrityError
 from models import db, User, UserSchema
+from marshmallow import ValidationError
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -11,17 +12,30 @@ def signup():
 
     username = data.get("username")
     password = data.get("password")
+    email = data.get("email")
 
     if not isinstance(username, str) or not username.strip():
         return {"error": "Username is required."}, 400
 
+    if not isinstance(email, str) or not email.strip():
+        return {"error": "Email is required."}, 400
+
     username = username.strip()
+    email = email.strip().lower()
 
     if len(username) > 100:
         return {"error": "Username cannot exceed 100 characters."}, 400
 
+    if len(email) > 100:
+        return {"error": "Email cannot exceed 100 characters."}, 400
+
     try:
-        user = User(username=username)
+        UserSchema().load({"username": username, "email": email})
+    except ValidationError as error:
+        return {"errors": error.messages}, 400
+
+    try:
+        user = User(username=username, email=email)
         user.password_hash = password
 
         db.session.add(user)
@@ -33,7 +47,7 @@ def signup():
 
     except IntegrityError:
         db.session.rollback()
-        return {"error": "Username is already taken."}, 409
+        return {"error": "Username or email is already registered."}, 409
 
     session.clear()
     session["user_id"] = user.id
