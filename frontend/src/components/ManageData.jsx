@@ -44,8 +44,8 @@ const ManageData = ({
                   <p className="mb-1 text-xs uppercase tracking-widest text-stone-500">
                     Artist
                   </p>
-                  <h3 className="text-2xl break-words">{artist.name}</h3>
-                  <p className="mt-2 text-sm text-stone-600 break-words">
+                  <h3 className="text-2xl wrap-wrap-break-words">{artist.name}</h3>
+                  <p className="mt-2 text-sm text-stone-600 wrap-wrap-break-words">
                     {artist.info}
                   </p>
                 </div>
@@ -91,10 +91,10 @@ const ManageData = ({
                           <p className="mb-1 text-xs uppercase tracking-widest text-stone-500">
                             Collection
                           </p>
-                          <h4 className="text-xl break-words">
+                          <h4 className="text-xl wrap-break-words">
                             {collection.title}
                           </h4>
-                          <p className="mt-2 text-sm text-stone-600 break-words">
+                          <p className="mt-2 text-sm text-stone-600 wrap-break-words">
                             {collection.description}
                           </p>
                         </div>
@@ -141,7 +141,7 @@ const ManageData = ({
                               )}
 
                               <div className="flex flex-1 flex-col p-4">
-                                <h5 className="text-lg break-words">
+                                <h5 className="text-lg wrap-break-words">
                                   {artwork.title}
                                 </h5>
 
@@ -151,7 +151,7 @@ const ManageData = ({
                                   </p>
                                 )}
 
-                                <p className="mt-2 text-sm text-stone-600 break-words">
+                                <p className="mt-2 text-sm text-stone-600 wrap-break-words">
                                   {artwork.description}
                                 </p>
 

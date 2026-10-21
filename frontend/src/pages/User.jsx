@@ -15,19 +15,19 @@ function User({ user, setUser }) {
     items: artists,
     loading: artistsLoading,
     error: artistsError,
-  } = useFetch("https://shilpo-api.onrender.com/artists");
+  } = useFetch("/api/artists");
 
   const {
     items: collections,
     loading: collectionsLoading,
     error: collectionsError,
-  } = useFetch("https://shilpo-api.onrender.com/collections");
+  } = useFetch("/api/collections");
 
   const {
     items: artworks,
     loading: artworksLoading,
     error: artworksError,
-  } = useFetch("https://shilpo-api.onrender.com/artworks");
+  } = useFetch("/api/artworks");
 
   const myArtists = artists.filter((artist) => artist.user_id === user?.id);
 
@@ -44,7 +44,7 @@ function User({ user, setUser }) {
 
   async function handleLogout() {
     try {
-      const response = await fetch("https://shilpo-api.onrender.com/logout", {
+      const response = await fetch("/api/logout", {
         method: "DELETE",
         credentials: "include",
       });

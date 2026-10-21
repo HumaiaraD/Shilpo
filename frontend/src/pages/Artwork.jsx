@@ -20,20 +20,20 @@ function Artwork() {
     items: artists,
     loading: artistsLoading,
     error: artistsError,
-  } = useFetch("https://shilpo-api.onrender.com/artists");
+  } = useFetch("/api/artists");
 
   const {
     items: collections,
     loading: collectionsLoading,
     error: collectionsError,
-  } = useFetch("https://shilpo-api.onrender.com/collections");
+  } = useFetch("/api/collections");
 
   const {
     items: artworks,
     loading: artworksLoading,
     error: artworksError,
     pagination,
-  } = useFetch("https://shilpo-api.onrender.com/artworks", page, 12);
+  } = useFetch("/api/artworks", page, 12);
 
   const loading = artistsLoading || collectionsLoading || artworksLoading;
 

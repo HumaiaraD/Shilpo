@@ -7,12 +7,18 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from marshmallow import ValidationError
 
+from flask import abort, send_from_directory
+from werkzeug.utils import safe_join
+
 from auth import auth_bp
 from models import *
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-app = Flask(__name__)
+FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+
+app = Flask(__name__, static_folder=None)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
@@ -21,7 +27,7 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="None",
 )
 
-app.register_blueprint(auth_bp)
+app.register_blueprint(auth_bp, url_prefix="/api")
 
 migrate = Migrate(app, db)
 
@@ -37,14 +43,25 @@ CORS(
 
 # Define Routes here
 @app.route("/", methods=["GET"])
-def index():
-    return "<h1>Welcome to my Art app.</h1>"
+@app.route("/<path:path>", methods=["GET"])
+def serve_frontend(path=""):
+    if path == "api" or path.startswith("api/"):
+        abort(404)
+
+    file_path = safe_join(str(FRONTEND_DIST), path)
+
+    
+
+    if path and file_path and Path(file_path).is_file():
+        return send_from_directory(str(FRONTEND_DIST), path)
+
+    return send_from_directory(str(FRONTEND_DIST), "index.html")
 
 
 # --------------------------------------------------------------------------------------------------------------
 
 
-@app.route("/artists", methods=["GET"])
+@app.route("/api/artists", methods=["GET"])
 def get_all_artists():
     artists = Artists.query.all()
     body = ArtistSchema(many=True).dump(artists)
@@ -52,7 +69,7 @@ def get_all_artists():
     return make_response(body, 200)
 
 
-@app.route("/artists/<int:id>", methods=["GET"])
+@app.route("/api/artists/<int:id>", methods=["GET"])
 def get_artist(id):
     artist = Artists.query.filter(Artists.id == id).first()
     if artist is None:
@@ -62,7 +79,7 @@ def get_artist(id):
     return make_response(body, 200)
 
 
-@app.route("/artists", methods=["POST"])
+@app.route("/api/artists", methods=["POST"])
 def create_artist():
     user_id = session.get("user_id")
 
@@ -87,7 +104,7 @@ def create_artist():
         return {"error": str(error)}, 422
 
 
-@app.route("/artists/<int:id>", methods=["PATCH"])
+@app.route("/api/artists/<int:id>", methods=["PATCH"])
 def update_artist(id):
     # validating user id
     user_id = session.get("user_id")
@@ -117,7 +134,7 @@ def update_artist(id):
         return {"error": str(error)}, 422
 
 
-@app.route("/artists/<int:id>", methods=["DELETE"])
+@app.route("/api/artists/<int:id>", methods=["DELETE"])
 def delete_artist(id):
     user_id = session.get("user_id")
 
@@ -141,7 +158,7 @@ def delete_artist(id):
 # --------------------------------------------------------------------------------------------------------------
 
 
-@app.route("/collections", methods=["GET"])
+@app.route("/api/collections", methods=["GET"])
 def get_collections():
     collections = Collection.query.all()
     body = CollectionSchema(many=True).dump(collections)
@@ -149,7 +166,7 @@ def get_collections():
     return make_response(body, 200)
 
 
-@app.route("/collections/<int:id>", methods=["GET"])
+@app.route("/api/collections/<int:id>", methods=["GET"])
 def get_collection(id):
     collection = Collection.query.filter(Collection.id == id).first()
     if collection is None:
@@ -158,7 +175,7 @@ def get_collection(id):
     return make_response(body, 200)
 
 
-@app.route("/collections", methods=["POST"])
+@app.route("/api/collections", methods=["POST"])
 def create_collection():
     user_id = session.get("user_id")
 
@@ -189,7 +206,7 @@ def create_collection():
         return {"error": str(error)}, 422
 
 
-@app.route("/collections/<int:id>", methods=["PATCH"])
+@app.route("/api/collections/<int:id>", methods=["PATCH"])
 def update_collection(id):
     user_id = session.get("user_id")
 
@@ -231,7 +248,7 @@ def update_collection(id):
         return {"error": str(error)}, 422
 
 
-@app.route("/collections/<int:id>", methods=["DELETE"])
+@app.route("/api/collections/<int:id>", methods=["DELETE"])
 def delete_collection(id):
     user_id = session.get("user_id")
 
@@ -252,7 +269,7 @@ def delete_collection(id):
 
 
 # --------------------------------------------------------------------------------------------------------------
-@app.route("/artworks", methods=["GET"])
+@app.route("/api/artworks", methods=["GET"])
 def get_all_artworks():
     # artworks = Artworks.query.all()
     # body = ArtworkSchema(many=True).dump(artworks)
@@ -287,7 +304,7 @@ def get_all_artworks():
     }, 200
 
 
-@app.route("/artworks/<int:id>", methods=["GET"])
+@app.route("/api/artworks/<int:id>", methods=["GET"])
 def get_artwork(id):
     artwork = Artworks.query.filter(Artworks.id == id).first()
     if artwork is None:
@@ -296,7 +313,7 @@ def get_artwork(id):
     return make_response(body, 200)
 
 
-@app.route("/artworks", methods=["POST"])
+@app.route("/api/artworks", methods=["POST"])
 def create_artwork():
     user_id = session.get("user_id")
 
@@ -328,7 +345,7 @@ def create_artwork():
         return {"error": str(error)}, 422
 
 
-@app.route("/artworks/<int:id>", methods=["PATCH"])
+@app.route("/api/artworks/<int:id>", methods=["PATCH"])
 def update_artwork(id):
     user_id = session.get("user_id")
 
@@ -371,7 +388,7 @@ def update_artwork(id):
         return {"error": str(error)}, 422
 
 
-@app.route("/artworks/<int:id>", methods=["DELETE"])
+@app.route("/api/artworks/<int:id>", methods=["DELETE"])
 def delete_artwork(id):
     user_id = session.get("user_id")
 

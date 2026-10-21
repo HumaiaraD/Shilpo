@@ -18,7 +18,7 @@ function App() {
     async function checkSession() {
       try {
         const response = await fetch(
-          "https://shilpo-api.onrender.com/check_session",
+          "/api/check_session",
           { credentials: "include" },
         );
         if (response.ok) {

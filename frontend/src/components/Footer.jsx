@@ -35,7 +35,7 @@ const Footer = () => {
                 <li key={to}>
                   <Link
                     to={to}
-                    className="rounded-sm transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-stone-300"
+                    className="rounded-sm transition-colors hover:text-white focus-visible:outline focus-visible:outline-offset-4 focus-visible:outline-stone-300"
                   >
                     {label}
                   </Link>

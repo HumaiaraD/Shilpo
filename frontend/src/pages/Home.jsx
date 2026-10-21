@@ -92,7 +92,7 @@ function Home() {
           <div className="relative left-[25vw] w-fit">
             <div
               ref={wheelRef}
-              className="relative aspect-square w-[90vw] max-w-[1200px] shrink-0"
+              className="relative aspect-square w-[90vw] max-w-300 shrink-0"
             >
               <div className="absolute inset-[15%] rounded-full border border-stone-300" />
 

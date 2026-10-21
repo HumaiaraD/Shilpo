@@ -17,7 +17,7 @@ const Login = ({ setUser }) => {
     setError("");
 
     try {
-      const response = await fetch("https://shilpo-api.onrender.com/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         credentials: "include",
         headers: {

@@ -14,7 +14,7 @@ const useFetch = (endpoint, page = null, perPage = 12) => {
       setError(null);
 
       try {
-        const url = new URL(endpoint);
+        const url = new URL(endpoint, window.location.origin);
 
         if (page != null) {
           url.searchParams.set("page", String(page));

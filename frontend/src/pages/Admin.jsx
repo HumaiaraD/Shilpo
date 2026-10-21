@@ -13,19 +13,19 @@ const Admin = ({ user }) => {
     addItem: addArtist,
     deleteItem: deleteArtist,
     updateItem: updateArtist,
-  } = useFetch("https://shilpo-api.onrender.com/artists");
+  } = useFetch("/api/artists");
   const {
     items: collections,
     addItem: addCollection,
     deleteItem: deleteCollection,
     updateItem: updateCollection,
-  } = useFetch("https://shilpo-api.onrender.com/collections");
+  } = useFetch("/api/collections");
   const {
     items: artworks,
     addItem: addArtwork,
     deleteItem: deleteArtwork,
     updateItem: updateArtwork,
-  } = useFetch("https://shilpo-api.onrender.com/artworks");
+  } = useFetch("/api/artworks");
 
   const [artistToEdit, setArtistToEdit] = useState(null);
   const [collectionToEdit, setCollectionToEdit] = useState(null);
