@@ -5,14 +5,14 @@ import {
   CheckCircle1,
   InfoCircle,
   InfoTriangle,
-  Xmark
+  Xmark,
 } from "@tailgrids/icons";
 import { cva, type VariantProps } from "class-variance-authority";
 import { createContext, use } from "react";
 import { Heading, HeadingProps } from "react-aria-components";
 
 const AlertContext = createContext<{ status: AlertStatus }>({
-  status: "default"
+  status: "default",
 });
 
 // Alert
@@ -26,13 +26,13 @@ const alertStyles = cva(
         success: "border-alert-success-border bg-alert-success-background",
         warning: "border-alert-warning-border bg-alert-warning-background",
         error: "border-alert-danger-border bg-alert-danger-background",
-        info: "border-alert-info-border bg-alert-info-background"
-      }
+        info: "border-alert-info-border bg-alert-info-background",
+      },
     },
     defaultVariants: {
-      status: "default"
-    }
-  }
+      status: "default",
+    },
+  },
 );
 
 export type AlertStatus = NonNullable<
@@ -77,13 +77,13 @@ const indicatorStyles = cva(
         success: "bg-alert-success-icon-background",
         warning: "bg-alert-warning-icon-background",
         error: "bg-alert-danger-icon-background",
-        info: "bg-alert-info-icon-background"
-      }
+        info: "bg-alert-info-icon-background",
+      },
     },
     defaultVariants: {
-      status: "default"
-    }
-  }
+      status: "default",
+    },
+  },
 );
 
 export interface AlertIndicatorProps extends React.ComponentProps<"span"> {}
@@ -150,12 +150,12 @@ const titleStyles = cva("font-semibold leading-6 tracking-[-0.2px]", {
       success: "text-alert-success-title",
       warning: "text-alert-warning-title",
       error: "text-alert-danger-title",
-      info: "text-alert-info-title"
-    }
+      info: "text-alert-info-title",
+    },
   },
   defaultVariants: {
-    status: "default"
-  }
+    status: "default",
+  },
 });
 
 export interface AlertTitleProps extends HeadingProps {}
@@ -200,7 +200,7 @@ export function AlertDescription({
       data-status={status}
       className={cn(
         "text-sm leading-5 tracking-[-0.2px] text-text-100",
-        className
+        className,
       )}
       {...props}
     >

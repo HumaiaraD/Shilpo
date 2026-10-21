@@ -4,7 +4,7 @@ import { cn } from "../../../utils/cn";
 import { cva, type VariantProps } from "class-variance-authority";
 import {
   Input as AriaInput,
-  type InputProps as AriaInputProps
+  type InputProps as AriaInputProps,
 } from "react-aria-components";
 
 const inputStyles = cva(
@@ -17,10 +17,10 @@ const inputStyles = cva(
         error:
           "border-input-error-focus-border focus:ring-input-error-focus-border/20",
         success:
-          "border-input-success-focus-border focus:ring-input-success-focus-border/20"
-      }
-    }
-  }
+          "border-input-success-focus-border focus:ring-input-success-focus-border/20",
+      },
+    },
+  },
 );
 
 export interface InputProps

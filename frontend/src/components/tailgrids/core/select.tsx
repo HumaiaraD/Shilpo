@@ -24,7 +24,7 @@ import {
   type SelectValueProps,
   Separator,
   Text,
-  type TextProps
+  type TextProps,
 } from "react-aria-components";
 import { buttonStyles } from "./button";
 
@@ -71,19 +71,19 @@ export function Select<T extends object>({
   if (props.selectionMode === "multiple") {
     const childrenArray = React.Children.toArray(children as any);
     const label = childrenArray.find(
-      child => (child as any)?.type?.displayName === "SelectLabel"
+      (child) => (child as any)?.type?.displayName === "SelectLabel",
     );
     const description = childrenArray.find(
-      child => (child as any)?.type?.displayName === "SelectDescription"
+      (child) => (child as any)?.type?.displayName === "SelectDescription",
     );
     const trigger = childrenArray.find(
-      child => (child as any)?.type?.displayName === "SelectTrigger"
+      (child) => (child as any)?.type?.displayName === "SelectTrigger",
     );
     const content = childrenArray.find(
-      child => (child as any)?.type?.displayName === "SelectContent"
+      (child) => (child as any)?.type?.displayName === "SelectContent",
     );
     const errorMessage = childrenArray.find(
-      child => (child as any)?.type?.displayName === "SelectErrorMessage"
+      (child) => (child as any)?.type?.displayName === "SelectErrorMessage",
     );
 
     const isValueEmpty =
@@ -123,7 +123,7 @@ export function Select<T extends object>({
               aria-hidden="true"
               tabIndex={-1}
             >
-              {Array.from((props.value as Iterable<Key>) || []).map(key => (
+              {Array.from((props.value as Iterable<Key>) || []).map((key) => (
                 <option key={key.toString()} value={key.toString()}>
                   {key}
                 </option>
@@ -161,10 +161,10 @@ function SelectTrigger({ className, children, ...props }: SelectTriggerProps) {
     <Button
       className={cn(
         buttonStyles({
-          appearance: "outline"
+          appearance: "outline",
         }),
         "p-2 pl-2.5 text-sm data-invalid:border-input-error-focus-border data-invalid:focus:ring-input-error-focus-border/20 justify-between",
-        className
+        className,
       )}
       data-invalid={isInvalid || undefined}
       {...props}
@@ -185,7 +185,7 @@ function SelectDisplayValue<T extends object>({
     <SelectValue
       className={cn(
         "truncate data-placeholder:text-input-placeholder-text",
-        className
+        className,
       )}
       {...props}
     />
@@ -205,7 +205,7 @@ function SelectIndicator({
       className={cn(
         "text-text-100 ml-2 shrink-0 transition-transform",
         !children && "group-data-open:rotate-180",
-        className
+        className,
       )}
       {...props}
     >
@@ -229,7 +229,7 @@ function SelectContent({ children, className, ...props }: SelectContentProps) {
           "bg-dropdown-background w-(--trigger-width) overflow-auto rounded-xl border border-base-100 shadow-md",
           "entering:animate-in entering:fade-in-0 entering:zoom-in-95",
           "exiting:animate-out exiting:fade-out-0 exiting:zoom-out-95",
-          className
+          className,
         )}
         {...props}
       >
@@ -241,7 +241,7 @@ function SelectContent({ children, className, ...props }: SelectContentProps) {
               ? context.value
               : new Set((context.value as Iterable<Key>) || [])
           }
-          onSelectionChange={keys => {
+          onSelectionChange={(keys) => {
             if (context.onChange) {
               context.onChange(Array.from(keys));
             }
@@ -260,7 +260,7 @@ function SelectContent({ children, className, ...props }: SelectContentProps) {
         "bg-dropdown-background w-(--trigger-width) overflow-auto rounded-xl border border-base-100 shadow-md",
         "entering:animate-in entering:fade-in-0 entering:zoom-in-95",
         "exiting:animate-out exiting:fade-out-0 exiting:zoom-out-95",
-        className
+        className,
       )}
       {...props}
     >
@@ -278,11 +278,11 @@ function SelectItem({ className, children, ...props }: ListBoxItemProps) {
       className={cn(
         "group/item text-text-50 focus:text-title-50 focus:bg-dropdown-hover-background relative flex w-full text-sm cursor-pointer items-center gap-3 rounded-md py-1 pl-1.5 pr-7 outline-hidden select-none",
         "data-disabled:text-input-disabled-text data-disabled:pointer-events-none",
-        className
+        className,
       )}
       {...props}
     >
-      {renderProps => (
+      {(renderProps) => (
         <>
           {typeof children === "function" ? children(renderProps) : children}
           {renderProps.isSelected && (
@@ -313,7 +313,7 @@ function SelectHeader({ className, ...props }: ComponentProps<typeof Header>) {
       {...props}
       className={cn(
         "px-3 py-2 text-sm font-medium text-text-100 select-none",
-        className
+        className,
       )}
     />
   );
@@ -326,7 +326,7 @@ function SelectSeparator({ className, ...props }: ComponentProps<"hr">) {
     <Separator
       className={cn(
         "bg-(--border-color-base-100) mx-1 my-1 h-px border-none",
-        className
+        className,
       )}
       {...props}
     />
@@ -340,7 +340,7 @@ function SelectLabel({ className, ...props }: LabelProps) {
     <Label
       className={cn(
         "max-w-fit text-sm font-medium text-input-label-text select-none",
-        className
+        className,
       )}
       {...props}
     />
@@ -398,5 +398,5 @@ export {
   SelectSection,
   SelectSeparator,
   SelectTrigger,
-  SelectDisplayValue as SelectValue
+  SelectDisplayValue as SelectValue,
 };

@@ -13,7 +13,7 @@ function Display({ artwork, collection, artist, onClose }) {
     closeRef.current?.focus();
 
     const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      "(prefers-reduced-motion: reduce)",
     ).matches;
 
     const ctx = gsap.context(() => {
@@ -95,10 +95,7 @@ function Display({ artwork, collection, artist, onClose }) {
           />
         )}
 
-        <h2
-          id="artwork-detail-title"
-          className="detail-content mt-8 text-4xl"
-        >
+        <h2 id="artwork-detail-title" className="detail-content mt-8 text-4xl">
           {artwork.title}
         </h2>
 

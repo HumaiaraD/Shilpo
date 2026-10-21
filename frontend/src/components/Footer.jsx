@@ -6,10 +6,7 @@ const Footer = () => {
       <div className="mx-auto max-w-6xl px-6 pb-6 pt-14">
         <div className="grid gap-10 pb-12 sm:grid-cols-2">
           <div>
-            <Link
-              to="/"
-              className="font-lavishly text-5xl text-stone-50"
-            >
+            <Link to="/" className="font-lavishly text-5xl text-stone-50">
               Shilpo
             </Link>
 
@@ -18,15 +15,12 @@ const Footer = () => {
             </p>
 
             <p className="mt-5 max-w-sm text-sm leading-7 text-stone-400">
-              A place to discover creative voices, bring collections
-              together, and give every artwork a home.
+              A place to discover creative voices, bring collections together,
+              and give every artwork a home.
             </p>
           </div>
 
-          <nav
-            aria-label="Footer navigation"
-            className="sm:justify-self-end"
-          >
+          <nav aria-label="Footer navigation" className="sm:justify-self-end">
             <h2 className="mb-5 text-xs uppercase tracking-[0.2em] text-stone-500">
               Explore
             </h2>
@@ -66,6 +60,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-}
+};
 
 export default Footer;

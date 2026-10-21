@@ -30,7 +30,7 @@ const ManageData = ({
       <div className="space-y-8">
         {artists.map((artist) => {
           const artistCollections = collections.filter(
-            (collection) => collection.artist_id === artist.id
+            (collection) => collection.artist_id === artist.id,
           );
 
           return (
@@ -78,7 +78,7 @@ const ManageData = ({
 
                 {artistCollections.map((collection) => {
                   const collectionArtworks = artworks.filter(
-                    (artwork) => artwork.collection_id === collection.id
+                    (artwork) => artwork.collection_id === collection.id,
                   );
 
                   return (
@@ -110,7 +110,9 @@ const ManageData = ({
                           <button
                             type="button"
                             className={deleteButton}
-                            onClick={() => handleDeleteCollection(collection.id)}
+                            onClick={() =>
+                              handleDeleteCollection(collection.id)
+                            }
                           >
                             Delete
                           </button>
@@ -164,7 +166,9 @@ const ManageData = ({
                                   <button
                                     type="button"
                                     className={deleteButton}
-                                    onClick={() => handleDeleteArtwork(artwork.id)}
+                                    onClick={() =>
+                                      handleDeleteArtwork(artwork.id)
+                                    }
                                   >
                                     Delete
                                   </button>

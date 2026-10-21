@@ -1,4 +1,3 @@
-import React from 'react'
 
 const About = () => {
   return (
@@ -14,15 +13,15 @@ const About = () => {
         <section>
           <h2 className="mb-3 text-3xl">Art, organized.</h2>
           <p className="text-base leading-relaxed">
-            Shilpo brings artists, collections, and artworks together in
-            one place. It helps artists and small collection managers
-            spend less time searching through folders and spreadsheets
-            and more time focusing on their work. "Shilpo" means "Art" in Bangla.
+            Shilpo brings artists, collections, and artworks together in one
+            place. It helps artists and small collection managers spend less
+            time searching through folders and spreadsheets and more time
+            focusing on their work. "Shilpo" means "Art" in Bangla.
           </p>
           <p className="mt-4 text-base leading-relaxed">
-            Visitors can explore the artwork gallery, while registered
-            users can create and manage their own artist profiles,
-            collections, and artworks.
+            Visitors can explore the artwork gallery, while registered users can
+            create and manage their own artist profiles, collections, and
+            artworks.
           </p>
         </section>
 
@@ -30,23 +29,31 @@ const About = () => {
           <h2 className="mb-3 text-3xl">Meet the Creator</h2>
           <p className="text-base leading-relaxed">
             Hi, I'm Humaiara Diea, a full stack developer exploring the
-            connection between art, design, and code. Creating an art
-            portfolio sparked my interest in web development, and Shilpo
-            brings those interests together.
+            connection between art, design, and code. Creating an art portfolio
+            sparked my interest in web development, and Shilpo brings those
+            interests together.
           </p>
           <p className="mt-4 text-base leading-relaxed">
             I built Shilpo as a full-stack capstone project using React,
             TailwindCSS, Flask, and PostgreSQL.
           </p>
-          <p>For more details about this project. Check out my github repo for Shilpo.</p>
-          <a href="https://github.com/HumaiaraD/Shilpo" className=' text-gray-400 hover:text-black'>github link</a>
+          <p>
+            For more details about this project. Check out my github repo for
+            Shilpo.
+          </p>
+          <a
+            href="https://github.com/HumaiaraD/Shilpo"
+            className=" text-gray-400 hover:text-black"
+          >
+            github link
+          </a>
         </section>
 
         <section className="flex flex-col border-t border-stone-200 pt-8">
           <h2 className="mb-3 text-3xl">Get in Touch</h2>
           <p className="text-base leading-relaxed">
-            Have a question, feedback, or an idea for a collaboration?
-            I’d love to hear from you.
+            Have a question, feedback, or an idea for a collaboration? I’d love
+            to hear from you.
           </p>
 
           {/* Replace with your email address */}
@@ -56,12 +63,24 @@ const About = () => {
           >
             Email me
           </a>
-          <a href="https://www.humaiaradiea.com/" target='_blank' className='underline underline-offset-4 text-gray-400 hover:text-black'>My Portfolio Website</a>
-          <a href="https://github.com/HumaiaraD" target='_blank' className='underline underline-offset-4 text-gray-400 hover:text-black'>My github</a>
+          <a
+            href="https://www.humaiaradiea.com/"
+            target="_blank"
+            className="underline underline-offset-4 text-gray-400 hover:text-black"
+          >
+            My Portfolio Website
+          </a>
+          <a
+            href="https://github.com/HumaiaraD"
+            target="_blank"
+            className="underline underline-offset-4 text-gray-400 hover:text-black"
+          >
+            My github
+          </a>
         </section>
       </div>
     </main>
   );
-}
+};
 
 export default About;

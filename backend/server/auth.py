@@ -1,7 +1,8 @@
 from flask import Blueprint, request, session
-from sqlalchemy.exc import IntegrityError
-from models import db, User, UserSchema
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
+
+from models import User, UserSchema, db
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -54,12 +55,13 @@ def signup():
 
     return UserSchema().dump(user), 201
 
+
 @auth_bp.route("/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True) or {}
 
     username = data.get("username")
-    password= data.get("password")
+    password = data.get("password")
 
     if not isinstance(username, str) or not isinstance(password, str):
         return {"error": "Username and password is required."}, 400
@@ -79,6 +81,7 @@ def login():
 def logout():
     session.clear()
     return "", 204
+
 
 @auth_bp.route("/check_session", methods=["GET"])
 def check_session():

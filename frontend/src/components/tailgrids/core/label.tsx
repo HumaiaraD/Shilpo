@@ -3,7 +3,7 @@
 import { cn } from "../../../utils/cn";
 import {
   Label as AriaLabel,
-  type LabelProps as AriaLabelProps
+  type LabelProps as AriaLabelProps,
 } from "react-aria-components";
 
 export interface LabelProps extends AriaLabelProps {}
