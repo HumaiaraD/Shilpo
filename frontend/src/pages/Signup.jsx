@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 
 const Signup = ({ setUser }) => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -23,7 +24,7 @@ const Signup = ({ setUser }) => {
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
@@ -46,6 +47,17 @@ const Signup = ({ setUser }) => {
           className="flex flex-col gap-4 max-w-sm mx-auto my-10"
         >
           <h1 className="text-3xl">Sign up </h1>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            required
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            maxLength={100}
+            autoComplete="email"
+          />
+
           <Label htmlFor="username">Username</Label>
           <Input
             required

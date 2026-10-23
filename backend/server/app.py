@@ -50,8 +50,6 @@ def serve_frontend(path=""):
 
     file_path = safe_join(str(FRONTEND_DIST), path)
 
-    
-
     if path and file_path and Path(file_path).is_file():
         return send_from_directory(str(FRONTEND_DIST), path)
 

@@ -9,6 +9,8 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import User from "./pages/User";
 import Signup from "./pages/Signup";
+import Account from "./pages/Account";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -51,6 +53,8 @@ function App() {
             }
           />
           <Route path="/signup" element={<Signup setUser={setUser} />} />
+          <Route path="/account" element={<Account user={user} setUser={setUser} />} />
+          <Route path="/changepassword" element={<ChangePassword  />} />
           <Route path="/admin" element={<Admin user={user} />} />
           <Route path="/artwork" element={<Artwork />} />
           <Route path="/about" element={<About />} />

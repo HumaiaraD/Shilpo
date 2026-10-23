@@ -24,7 +24,17 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=True, unique=True)
     email_verified = db.Column(db.Boolean, default=False, nullable=False)
 
-    # artists = db.relationship("Artists", backref="users")
+    @validates("email")
+    def validate_email(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Email must be text.")
+        return value.strip().lower()
+
+    @validates("username")
+    def validate_username(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Username must be text.")
+        return value.strip().lower()
 
     @hybrid_property
     def password_hash(self):

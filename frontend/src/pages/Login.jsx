@@ -46,7 +46,7 @@ const Login = ({ setUser }) => {
         className="flex flex-col gap-4 max-w-sm mx-auto my-10"
       >
         <h1 className="text-3xl">Login </h1>
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username">Username or email</Label>
         <Input
           required
           id="username"

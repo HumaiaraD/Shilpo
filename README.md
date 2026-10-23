@@ -1,6 +1,7 @@
 # Shilpo — A Space for Artists and Their Art
 
-vercel/render deployed link: https://shilpo-one.vercel.app/  - wait a minute cause free render is sleeping
+vercel deployed link: https://shilpo-one.vercel.app/  - wait a minute cause free render is sleeping
+render deployment: https://shilpo-api.onrender.com/ - give it a minute before you judge
 
 Shilpo is a full-stack art portfolio manager that helps artists and small collection managers organize and showcase artwork.
 

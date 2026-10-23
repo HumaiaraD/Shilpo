@@ -130,37 +130,45 @@ function User({ user, setUser }) {
         </div>
       </header>
 
-      <section className="max-w-sm mx-auto my-10 text-center">
-        <h1 className="text-xl mb-6">My Account</h1>
-
+      <section className="max-w-sm mx-auto my-12 px-4 text-center">
         {user ? (
-          <div className="flex flex-col">
-            <p className="mb-4 text-3xl">Welcome, {user.username}!</p>
-            <Link
-              to="/admin"
-              className="text-2xl m-2 underline hover:text-gray-400"
-            >
-              Create/Edit Portfolio
-            </Link>
+          <div className="flex flex-col items-center gap-4">
+            <h1 className="text-xl font-light">{user.username}</h1>
+
+            <div className="flex gap-2">
+              <Link
+                to="/admin"
+                className="rounded-lg bg-black text-white px-4 py-1.5 text-sm md:text-[16px] hover:bg-black/50 transition"
+              >
+                Add/Edit Portfolio
+              </Link>
+              <Link
+                to="/account"
+                className="rounded-lg bg-black text-white px-4 py-1.5 text-sm md:text-[16px] hover:bg-black/50 transition"
+              >
+                Account Settings
+              </Link>
+            </div>
+
             <button
               type="button"
               onClick={handleLogout}
-              className="m-2 underline hover:text-gray-400"
+              className="text-sm text-gray-400 hover:text-black transition"
             >
-              Logout
+              Log out
             </button>
           </div>
         ) : (
-          <div className="flex justify-center gap-6">
+          <div className="flex justify-center gap-2">
             <Link
               to="/login"
-              className="border-2 border-black rounded-3xl px-6 py-2"
+              className="rounded-lg bg-black text-white px-4 py-1.5 text-sm hover:bg-gray-700 transition"
             >
               Login
             </Link>
             <Link
               to="/signup"
-              className="border-2 border-black rounded-3xl px-6 py-2"
+              className="rounded-lg bg-black text-white px-4 py-1.5 text-sm hover:bg-gray-700 transition"
             >
               Signup
             </Link>
