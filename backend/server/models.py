@@ -72,7 +72,9 @@ class Artists(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
 
-    user = db.relationship("User", backref=db.backref("artists", cascade="all, delete-orphan"))
+    user = db.relationship(
+        "User", backref=db.backref("artists", cascade="all, delete-orphan")
+    )
 
     @validates("name")
     def validate_name(self, key, name):

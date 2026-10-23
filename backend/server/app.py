@@ -7,6 +7,9 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from marshmallow import ValidationError
 
+import cloudinary
+import cloudinary.uploader
+
 from flask import abort, send_from_directory
 from werkzeug.utils import safe_join
 
@@ -14,6 +17,13 @@ from auth import auth_bp
 from models import *
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True,
+)
 
 FRONTEND_DIST = Path(__file__).resolve().parents[2] / "frontend" / "dist"
 
@@ -404,6 +414,43 @@ def delete_artwork(id):
     db.session.commit()
 
     return "", 204
+
+
+# -------------image upload endpoint route----------------
+
+@app.route("/api/upload", methods=["POST"])
+def image_upload():
+    user_id = session.get("user_id")
+    if user_id is None:
+        return {"error": "Login required"}, 401
+
+    if "image" not in request.files:
+        return {"error": "No image provided"}, 400
+
+    image = request.files["image"]
+
+    if image.filename == "":
+        return {"error": "No image selected"}, 400
+
+    if request.content_length and request.content_length > 5 * 1024 * 1024:
+        return {"error": "Image too large"}, 413
+
+    if image.mimetype not in ["image/jpeg", "image/png", "image/webp"]:
+        return {"error": "Invalid image type"}, 400
+
+    try:
+        result = cloudinary.uploader.upload(
+            image, folder="shilpo/artworks", resource_type="image"
+        )
+
+        return {
+            "image_url": result["secure_url"],
+            "public_id": result["public_id"],
+        }, 201
+
+    except Exception:
+        app.logger.exception("Cloudinary upload failed")
+        return {"error": "Image upload failed"}, 500
 
 
 if __name__ == "__main__":

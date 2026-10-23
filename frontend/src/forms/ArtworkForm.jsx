@@ -3,6 +3,7 @@ import { Input } from "../components/tailgrids/core/input";
 import { Label } from "../components/tailgrids/core/label";
 import { Button } from "../components/tailgrids/core/button";
 
+
 const ArtworkForm = ({
   addArtwork,
   collections,
@@ -18,19 +19,30 @@ const ArtworkForm = ({
   const [description, setDescription] = useState(artworkToEdit?.description ?? "");
   const [error, setError] = useState("");
 
+  const [imageMethod, setImageMethod] = useState("url");
+  const [imageFile, setImageFile] = useState(null);
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
-    const artworkData = {
+    try {
+      let finalImageUrl = image_url;
+
+      if (imageMethod === "upload") {
+        if (!imageFile) {
+          throw new Error("Please select an image");
+        }
+
+        finalImageUrl = await uploadImage();
+      }
+      const artworkData = {
       title,
-      image_url,
+      image_url: finalImageUrl,
       medium,
       description,
       collection_id: Number(collectionId),
     };
-
-    try {
       if (artworkToEdit) {
         await updateArtwork(artworkToEdit.id, artworkData);
       } else {
@@ -44,12 +56,33 @@ const ArtworkForm = ({
       setCollectionId("");
       setTitle("");
       setImage_url("");
+      setImageFile(null);
       setMedium("");
       setDescription("");
       onSaved();
     } catch (error) {
       setError(error.message);
     }
+  }
+
+  async function uploadImage(){
+    if (!imageFile) return null;
+    
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Image upload failed")
+    }
+    const data = await response.json()
+    return data.image_url;
+
   }
 
   return (
@@ -84,25 +117,40 @@ const ArtworkForm = ({
         <Input
           required
           type="text"
-          value={title}
+          value={title ?? ""}
           id="artworkTitle"
           name="artworkTitle"
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <Label htmlFor="artworkImage">Artwork Image:</Label>
-        <Input
-          type="url"
-          value={image_url}
-          id="artworkImage"
-          name="artworkImage"
-          onChange={(e) => setImage_url(e.target.value)}
-        />
+        <select
+          value={imageMethod ?? ""}
+          onChange={(e) => setImageMethod(e.target.value)}
+          className="w-full rounded-xl border border-stone-300 p-3"
+        >
+          <option value="url">Image URL</option>
+          <option value="upload">Upload Image</option>
+        </select>
+        {imageMethod === "url" ? (
+          <Input
+            type="url"
+            value={image_url ?? ""}
+            placeholder="https://example.com/image.jpg"
+            onChange={(e) => setImage_url(e.target.value)}
+          />
+        ) : (
+          <Input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setImageFile(e.target.files[0] || null)}
+          />
+        )}
 
         <Label htmlFor="artworkMedium">Artwork Medium:</Label>
         <Input
           type="text"
-          value={medium}
+          value={medium ?? ""}
           id="artworkMedium"
           name="artworkMedium"
           onChange={(e) => setMedium(e.target.value)}
@@ -111,7 +159,7 @@ const ArtworkForm = ({
         <Label htmlFor="artworkDescription">Artwork Description:</Label>
         <textarea
           id="artworkDescription"
-          value={description}
+          value={description ?? ""}
           name="artworkDescription"
           onChange={(e) => setDescription(e.target.value)}
           className="border-gray-300 rounded-2xl focus:border-indigo-300 focus:ring-4 focus:ring-blue-300/30"

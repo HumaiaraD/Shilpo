@@ -196,7 +196,6 @@ def update_password():
     if not isinstance(data, dict):
         return {"error": "A JSON object is required."}, 400
 
-    
     current_password = data.get("current_password")
     new_password = data.get("new_password")
     confirm_password = data.get("confirm_password")
@@ -224,7 +223,8 @@ def update_password():
     return {"message": "Password updated successfully!"}, 200
 
 
-#----------for account deletion-------------
+# ----------for account deletion-------------
+
 
 @auth_bp.route("/account", methods=["DELETE"])
 def delete_account():
@@ -265,6 +265,3 @@ def delete_account():
 
     session.clear()
     return {"error": "Account deleted successfully."}, 200
-
-
-    
