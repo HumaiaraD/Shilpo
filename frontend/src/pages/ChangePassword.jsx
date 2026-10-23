@@ -81,7 +81,7 @@ const ChangePassword = () => {
                     type="text"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    autoComplete="password"
+                    autoComplete="currentPassword"
                     className=""
                     />
                 </div>
@@ -96,7 +96,7 @@ const ChangePassword = () => {
                     type="text"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    autoComplete="password"
+                    autoComplete="newPassword"
                     className=""
                     />
                 </div>

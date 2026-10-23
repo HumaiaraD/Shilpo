@@ -222,4 +222,49 @@ def update_password():
         return {"error": str(err)}, 400
 
     return {"message": "Password updated successfully!"}, 200
+
+
+#----------for account deletion-------------
+
+@auth_bp.route("/account", methods=["DELETE"])
+def delete_account():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Not logged in."}, 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None:
+        session.clear()
+        return {"error": "Not logged in"}, 401
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return {"error": "A JSON object is required."}, 400
+
+    current_password = data.get("current_password")
+    confirmation = data.get("confirmation")
+
+    if not isinstance(current_password, str) or not current_password:
+        return {"error": "Current password is required."}, 400
+
+    if not user.authenticate(current_password):
+        return {"error": "Current password is incorrect."}, 400
+
+    if confirmation != "DELETE":
+        return {"error": "Type DELETE to confirm account deletion."}, 400
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return {"error": "Account could not be deleted"}, 409
+
+    session.clear()
+    return {"error": "Account deleted successfully."}, 200
+
+
     
