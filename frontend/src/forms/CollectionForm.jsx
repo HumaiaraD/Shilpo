@@ -93,7 +93,7 @@ const CollectionForm = ({
 
         <Button
           type="submit"
-          className=" m-auto bg-green-200 hover:bg-green-300 p-3 rounded-3xl text-gray-600"
+          className="bg-neutral-900 px-8 py-4 text-sm w-1/3 mx-auto text-white transition hover:bg-neutral-700 disabled:opacity-50"
         >
           {collectionToEdit ? "Save Changes" : "Add Collection"}
         </Button>

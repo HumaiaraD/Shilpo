@@ -11,6 +11,8 @@ import User from "./pages/User";
 import Signup from "./pages/Signup";
 import Account from "./pages/Account";
 import ChangePassword from "./pages/ChangePassword";
+import Newsroom from "./pages/Newsroom";
+import ExhibitionForm from "./forms/ExhibitionForm";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -57,6 +59,8 @@ function App() {
           <Route path="/changepassword" element={<ChangePassword  />} />
           <Route path="/admin" element={<Admin user={user} />} />
           <Route path="/artwork" element={<Artwork />} />
+          <Route path="/newsroom" element={<Newsroom />} />
+          <Route path="/newsroom/create" element={<ExhibitionForm user={user}/>} />
           <Route path="/about" element={<About />} />
         </Route>
       </Routes>

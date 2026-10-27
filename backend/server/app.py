@@ -456,6 +456,12 @@ def image_upload():
 
 
 # -----------------newsroom exhibition routes--------------------------------------------------------------------
+@app.route("/api/exhibitions", methods=["GET"])
+def get_all_exhibitions():
+    exhibitions = Exhibition.query.all()
+    body = ExhibitionSchema(many=True).dump(exhibitions)
+
+    return make_response(body, 200)
 
 
 @app.route("/api/exhibitions", methods=["POST"])
@@ -511,6 +517,73 @@ def create_exhibition():
         return {"error": "Could not save exhibition"}, 400
 
     return make_response(exhibition_schema.dump(exhibition), 201)
+
+
+@app.route("/api/exhibitions/<int:id>", methods=["PATCH"])
+def update_exhibition(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None or not user.is_admin:
+        return {"error": "Admin access required."}, 403
+
+    exhibition = Exhibition.query.filter(Exhibition.id == id).first()
+    if exhibition is None:
+        return {"error": "Exhibition not found"}, 404
+
+    try:
+        data = ExhibitionSchema().load(request.get_json(), partial=True)
+
+        artwork_ids = data.pop("artwork_ids", None)
+
+        for key, value in data.items():
+            setattr(exhibition, key, value)
+
+        if artwork_ids is not None:
+            artworks = Artworks.query.filter(Artworks.id.in_(artwork_ids)).all()
+
+            if len(artworks) != len(set(artwork_ids)):
+                db.session.rollback()
+                return {"error": "Invalid artwork IDs."}, 422
+
+            exhibition.artworks = artworks
+
+        db.session.commit()
+        return make_response(ExhibitionSchema().dump(exhibition), 200)
+
+    except ValidationError as error:
+        db.session.rollback()
+        return {"errors": error.messages}, 422
+
+    except ValueError as error:
+        db.session.rollback()
+        return {"error": str(error)}, 422
+
+
+@app.route("/api/exhibitions/<int:id>", methods=["DELETE"])
+def delete_exhibition(id):
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required."}, 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None or not user.is_admin:
+        return {"error": "Admin access required."}, 403
+
+    exhibition = db.session.get(Exhibition, id)
+    if exhibition is None:
+        return {"error": "Exhibition not found"}, 404
+
+    db.session.delete(exhibition)
+    db.session.commit()
+
+    return "", 204
 
 
 if __name__ == "__main__":

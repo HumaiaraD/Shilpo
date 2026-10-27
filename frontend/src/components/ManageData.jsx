@@ -2,12 +2,19 @@ const ManageData = ({
   artists,
   collections,
   artworks,
+
   handleEditArtist,
   handleDeleteArtist,
+
   handleEditCollection,
   handleDeleteCollection,
+
   handleEditArtwork,
   handleDeleteArtwork,
+
+  exhibitions,
+  handleEditExhibition,
+  handleDeleteExhibition
 }) => {
   const editButton =
     "rounded-lg bg-stone-100 px-4 py-2 text-sm text-stone-700 hover:bg-stone-200";
@@ -16,6 +23,7 @@ const ManageData = ({
     "rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700 hover:bg-red-100";
 
   return (
+    <>
     <section className="w-full max-w-6xl mx-auto my-10 px-4">
       <h2 className="text-3xl font-lavishly font-bold text-stone-700 mb-8 text-center">
         Manage Portfolio
@@ -178,15 +186,59 @@ const ManageData = ({
                           ))}
                         </ul>
                       )}
+
                     </section>
                   );
                 })}
               </div>
             </article>
+
+            
           );
         })}
       </div>
     </section>
+
+    <section className="mt-10 ">
+<h2 className="text-3xl font-lavishly font-bold text-stone-700 mb-8 text-center">
+        Manage Exhibition
+      </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {exhibitions.map((exhibition) => (
+                            <div key={exhibition.id} className="border border-stone-200 rounded-xl p-4">
+                              {exhibition.cover_image_url && (
+                                <img
+                                  src={exhibition.cover_image_url}
+                                  alt={exhibition.title}
+                                  className="w-full h-48 object-cover"
+                                />
+                              )}
+
+                              <h3 className="text-xl mt-3">{exhibition.title}</h3>
+                              <p className="text-sm text-stone-600">
+                                {exhibition.description}
+                              </p>
+
+                              <div className="flex gap-2 mt-4">
+                                <button
+                                  className={editButton}
+                                  onClick={() => handleEditExhibition(exhibition)}
+                                >
+                                  Edit
+                                </button>
+
+                                <button
+                                  className={deleteButton}
+                                  onClick={() => handleDeleteExhibition(exhibition.id)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+    </>
   );
 };
 

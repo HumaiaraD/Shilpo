@@ -4,9 +4,11 @@ import CollectionForm from "../forms/CollectionForm";
 import ArtworkForm from "../forms/ArtworkForm";
 import useFetch from "../components/useFetch";
 import ManageData from "../components/ManageData";
+import { useNavigate } from "react-router-dom";
 
 const Admin = ({ user }) => {
   const [activeForm, setActiveForm] = useState("artist");
+  const navigate = useNavigate();
 
   const {
     items: artists,
@@ -26,10 +28,16 @@ const Admin = ({ user }) => {
     deleteItem: deleteArtwork,
     updateItem: updateArtwork,
   } = useFetch("/api/artworks");
+  const {
+    items: exhibitions,
+    deleteItem: deleteExhibition,
+    updateItem: updateExhibition,
+  } = useFetch("/api/exhibitions");
 
   const [artistToEdit, setArtistToEdit] = useState(null);
   const [collectionToEdit, setCollectionToEdit] = useState(null);
   const [artworkToEdit, setArtworkToEdit] = useState(null);
+  const [exhibitionToEdit, setExhibitionToEdit] = useState(null);
 
   const myArtists = artists.filter((artist) => artist.user_id === user.id);
 
@@ -40,6 +48,8 @@ const Admin = ({ user }) => {
   const myArtworks = artworks.filter((artwork) =>
     myCollections.some((collection) => collection.id === artwork.collection_id),
   );
+
+  const myExhibitions = exhibitions;
 
   function scrollToForm() {
     document.getElementById("portfolio-form")?.scrollIntoView({
@@ -101,6 +111,25 @@ const Admin = ({ user }) => {
     try {
       await deleteArtwork(id);
       if (artworkToEdit?.id === id) setArtworkToEdit(null);
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
+ function handleEditExhibition(exhibition) {
+  navigate("/newsroom/create", {
+    state: { exhibition }
+  });
+}
+
+  async function handleDeleteExhibition(id) {
+    if (!window.confirm("Delete this exhibition?")) {
+      return;
+    }
+
+    try {
+      await deleteExhibition(id);
+      if (exhibitionToEdit?.id === id) setExhibitionToEdit(null);
     } catch (err) {
       alert(err.message);
     }
@@ -180,12 +209,19 @@ const Admin = ({ user }) => {
         artists={myArtists}
         collections={myCollections}
         artworks={myArtworks}
+
         handleEditArtist={handleEditArtist}
         handleDeleteArtist={handleDeleteArtist}
+
         handleEditCollection={handleEditCollection}
         handleDeleteCollection={handleDeleteCollection}
+
         handleEditArtwork={handleEditArtwork}
         handleDeleteArtwork={handleDeleteArtwork}
+
+        exhibitions={myExhibitions}
+        handleDeleteExhibition={handleDeleteExhibition}
+        handleEditExhibition={handleEditExhibition}
       />
     </>
   );

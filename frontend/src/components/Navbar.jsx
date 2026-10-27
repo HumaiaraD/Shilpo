@@ -11,6 +11,7 @@ const Navbar = () => {
 
         <div className="flex md:flex-row  flex-col w-[70%] text-[14px] md:text-[18px] justify-between p-5 mt-5  font-lavishly font-light ">
           <NavLink to="/">Home</NavLink>
+          <NavLink to="/newsroom">Newsroom</NavLink>
           <NavLink to="/artwork">Artwork</NavLink>
           {/* <NavLink to="/admin">Admin</NavLink> */}
           <NavLink to="/user">My Account</NavLink>
