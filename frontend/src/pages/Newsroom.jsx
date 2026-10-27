@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import useFetch from '../components/useFetch';
+import Train from '../components/Train';
 
 const Newsroom = () => {
 
@@ -69,6 +70,8 @@ const Newsroom = () => {
             ))}
         </section>
     </main>
+
+    <Train />
     
     </>
   )

@@ -141,6 +141,9 @@ const Admin = ({ user }) => {
         <h1 className="text-4xl">Publish your art </h1>
         <p>Add Artists, collections, or artworks using forms below.</p>
       </header>
+        <button
+          type="button" onClick={() => navigate("/user")} className="text-sm text-neutral-500 hover:text-black">← go back
+        </button>
       <main className="flex flex-col gap-3 m-20">
         <nav className="flex gap-8 justify-center">
           <button

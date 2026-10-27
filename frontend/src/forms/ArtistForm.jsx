@@ -38,6 +38,7 @@ const ArtistForm = ({ artistToEdit, addArtist, updateArtist, onSaved }) => {
   return (
     <>
       <section>
+
         <form
           onSubmit={handleSubmit}
           id="artistForm"
