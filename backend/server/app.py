@@ -6,6 +6,7 @@ from flask import Flask, make_response, request, session
 from flask_cors import CORS
 from flask_migrate import Migrate
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 
 import cloudinary
 import cloudinary.uploader
@@ -418,6 +419,7 @@ def delete_artwork(id):
 
 # -------------image upload endpoint route----------------
 
+
 @app.route("/api/upload", methods=["POST"])
 def image_upload():
     user_id = session.get("user_id")
@@ -451,6 +453,64 @@ def image_upload():
     except Exception:
         app.logger.exception("Cloudinary upload failed")
         return {"error": "Image upload failed"}, 500
+
+
+# -----------------newsroom exhibition routes--------------------------------------------------------------------
+
+
+@app.route("/api/exhibitions", methods=["POST"])
+def create_exhibition():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        return {"error": "Login required"}, 401
+
+    user = db.session.get(User, user_id)
+
+    if user is None or not user.is_admin:
+        return {"error": "Admin access required"}, 403
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return {"error": "Request body must be a JSON object"}, 400
+
+    exhibition_schema = ExhibitionSchema()
+
+    try:
+        validated_data = exhibition_schema.load(data)
+    except ValidationError as err:
+        return {"errors": err.messages}, 400
+
+    artwork_ids = validated_data.pop("artwork_ids")
+
+    if len(artwork_ids) != len(set(artwork_ids)):
+        return {"error": "Duplicate artwork IDs are not allowed"}, 400
+
+    artworks = db.session.scalars(
+        db.select(Artworks).where(Artworks.id.in_(artwork_ids))
+    ).all()
+
+    if len(artworks) != len(artwork_ids):
+        return {"error": "One or more artworks do not exist"}, 400
+
+    try:
+        exhibition = Exhibition(**validated_data, created_by_id=user.id)
+
+        exhibition.artworks = artworks
+
+        db.session.add(exhibition)
+        db.session.commit()
+
+    except ValueError as err:
+        db.session.rollback()
+        return {"error": str(err)}, 400
+
+    except IntegrityError:
+        db.session.rollback()
+        return {"error": "Could not save exhibition"}, 400
+
+    return make_response(exhibition_schema.dump(exhibition), 201)
 
 
 if __name__ == "__main__":

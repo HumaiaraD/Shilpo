@@ -133,7 +133,7 @@ function User({ user, setUser }) {
       <section className="max-w-sm mx-auto my-12 px-4 text-center">
         {user ? (
           <div className="flex flex-col items-center gap-4">
-            <h1 className="text-xl font-light">{user.username} dashboard</h1>
+            <h1 className="text-xl font-light">{user.username}'s dashboard</h1>
 
             <div className="flex gap-2">
               <Link

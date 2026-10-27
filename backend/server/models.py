@@ -3,13 +3,27 @@ from sqlalchemy.orm import validates
 
 db = SQLAlchemy()
 from flask_bcrypt import Bcrypt
-from marshmallow import Schema, fields
+from marshmallow import (
+    Schema,
+    fields,
+    validate,
+    validates_schema,
+    pre_load,
+    ValidationError,
+)
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
 
 bcrypt = Bcrypt()
 
-# defining models here:
+# defining table models here:
+exhibition_artworks = db.Table(
+    "exhibition_artworks",
+    db.Column(
+        "exhibition_id", db.Integer, db.ForeignKey("exhibition.id"), primary_key=True
+    ),
+    db.Column("artwork_id", db.Integer, db.ForeignKey("artworks.id"), primary_key=True),
+)
 
 
 # adding user auth:
@@ -24,11 +38,16 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=True, unique=True)
     email_verified = db.Column(db.Boolean, default=False, nullable=False)
 
+    # adding administrative verification
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+
     @validates("email")
     def validate_email(self, key, value):
+        if value is None:
+            return None
         if not isinstance(value, str):
             raise TypeError("Email must be text.")
-        return value.strip().lower()
+        return value.strip().lower() or None
 
     @validates("username")
     def validate_username(self, key, value):
@@ -61,6 +80,73 @@ class UserSchema(Schema):
 
     email = fields.Email()
     email_verified = fields.Boolean(dump_only=True)
+
+    is_admin = fields.Boolean(dump_only=True)
+
+
+class Exhibition(db.Model):
+    __tablename__ = "exhibition"
+    __table_args__ = (
+        db.CheckConstraint("end_date >= start_date", name="ck_exhibition_dates"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    location = db.Column(db.String(255), nullable=True)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    visiting_hours = db.Column(db.String(200), nullable=True)
+    cover_image_url = db.Column(db.String(500), nullable=True)
+
+    created_by_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    creator = db.relationship("User", backref="exhibitions")
+
+    artworks = db.relationship(
+        "Artworks", secondary="exhibition_artworks", backref="exhibitions"
+    )
+
+    @validates("title")
+    def validate_title(self, key, value):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("Title cannot be empty.")
+        value = value.strip()
+        if len(value) > 100:
+            raise ValueError("Title cannot exceed 100 characters.")
+        return value
+
+
+class ExhibitionSchema(Schema):
+    id = fields.Int(dump_only=True)
+    title = fields.String(required=True, validate=validate.Length(min=1, max=100))
+    description = fields.String(allow_none=True)
+    location = fields.String(allow_none=True, validate=validate.Length(max=255))
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(required=True)
+    visiting_hours = fields.String(allow_none=True, validate=validate.Length(max=200))
+    cover_image_url = fields.Url(allow_none=True, validate=validate.Length(max=500))
+
+    created_by_id = fields.Int(dump_only=True)
+
+    artworks = fields.Nested(lambda: ArtworkSchema(), many=True, dump_only=True)
+    artwork_ids = fields.List(
+        fields.Int(),
+        required=True,
+        load_only=True,
+        validate=validate.Length(min=1),
+    )
+
+    @pre_load
+    def strip_title(self, data, **kwargs):
+        if isinstance(data.get("title"), str):
+            data = {**data, "title": data["title"].strip()}
+        return data
+
+    @validates_schema
+    def check_dates(self, data, **kwargs):
+        start, end = data.get("start_date"), data.get("end_date")
+        if start and end and end < start:
+            raise ValidationError("End date cannot be before start date.", "end_date")
 
 
 class Artists(db.Model):
