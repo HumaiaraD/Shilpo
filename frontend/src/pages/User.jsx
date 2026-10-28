@@ -130,51 +130,67 @@ function User({ user, setUser }) {
         </div>
       </header>
 
-      <section className="max-w-sm mx-auto my-12 px-4 text-center">
-        {user ? (
-          <div className="flex flex-col items-center gap-4">
-            <h1 className="text-xl font-light">{user.username}'s dashboard</h1>
+    <section className="max-w-2xl mx-auto my-12 px-4 text-center">
+     {user ? (
+        <div className="flex flex-col items-center gap-4">
+          <h1 className="text-xl font-light">
+            {user.username}'s dashboard
+          </h1>
 
-            <div className="flex gap-2">
-              <Link
-                to="/admin"
-                className="rounded-lg bg-black text-white px-4 py-1.5 text-sm md:text-[16px] hover:bg-black/50 transition"
-              >
-                Add/Edit Portfolio
-              </Link>
-              <Link
-                to="/account"
-                className="rounded-lg bg-black text-white px-4 py-1.5 text-sm md:text-[16px] hover:bg-black/50 transition"
-              >
-                Account Settings
-              </Link>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="text-sm text-gray-400 hover:text-black transition"
-            >
-              Log out
-            </button>
-          </div>
-        ) : (
-          <div className="flex justify-center gap-2">
+          <div className="flex flex-wrap justify-center gap-3">
             <Link
-              to="/login"
-              className="rounded-lg bg-black text-white px-4 py-1.5 text-sm hover:bg-gray-700 transition"
+              to="/admin"
+              className="rounded bg-black text-white px-5 py-3
+                        text-sm md:text-base hover:bg-black/70 transition"
             >
-              Login
+              Add/Edit Portfolio
             </Link>
+
             <Link
-              to="/signup"
-              className="rounded-lg bg-black text-white px-4 py-1.5 text-sm hover:bg-gray-700 transition"
+              to="/newsroom/create"
+              className="rounded bg-black text-white px-5 py-3 
+              text-sm md:text-base hover:bg-black/70 transition"
+              >
+              + Create Exhibition
+            </Link>
+
+            <Link
+              to="/account"
+              className="rounded bg-black text-white px-5 py-3
+                        text-sm md:text-base hover:bg-black/70 transition"
             >
-              Signup
+              Account Settings
             </Link>
           </div>
-        )}
-      </section>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="text-sm md:text-lg text-gray-400 hover:text-black transition"
+          >
+            Log out
+          </button>
+        </div>
+      ) : (
+        <div className="flex justify-center gap-2">
+          <Link
+            to="/login"
+            className="rounded-lg bg-black text-white px-4 py-1.5
+                      text-sm hover:bg-gray-700 transition"
+          >
+            Login
+          </Link>
+
+          <Link
+            to="/signup"
+            className="rounded-lg bg-black text-white px-4 py-1.5
+                      text-sm hover:bg-gray-700 transition"
+          >
+            Signup
+          </Link>
+        </div>
+      )}
+    </section>
 
       {user && (
         <section className="max-w-6xl mx-auto px-4 pb-10">

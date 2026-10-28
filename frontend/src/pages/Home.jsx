@@ -187,7 +187,7 @@ function Home() {
               <p className="text-base leading-relaxed text-stone-600">
                 Session-based authentication supports signup, login, and logout.
                 Passwords are hashed with Bcrypt, and backend ownership checks
-                restrict changes to each user’s own records.
+                restrict changes to each user's own records.
               </p>
             </article>
           </div>

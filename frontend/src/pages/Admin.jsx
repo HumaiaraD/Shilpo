@@ -31,7 +31,7 @@ const Admin = ({ user }) => {
   const {
     items: exhibitions,
     deleteItem: deleteExhibition,
-    updateItem: updateExhibition,
+    // updateItem: updateExhibition,
   } = useFetch("/api/exhibitions");
 
   const [artistToEdit, setArtistToEdit] = useState(null);

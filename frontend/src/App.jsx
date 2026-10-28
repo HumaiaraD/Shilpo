@@ -55,7 +55,7 @@ function App() {
             }
           />
           <Route path="/signup" element={<Signup setUser={setUser} />} />
-          <Route path="/account" element={<Account user={user} setUser={setUser} />} />
+          <Route path="/account" element={<Account key={user?.id ?? "anon"} user={user} setUser={setUser} />} />
           <Route path="/changepassword" element={<ChangePassword  />} />
           <Route path="/admin" element={<Admin user={user} />} />
           <Route path="/artwork" element={<Artwork />} />

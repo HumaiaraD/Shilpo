@@ -55,10 +55,10 @@ const ChangePassword = () => {
         <section className="max-w-2xl mx-auto my-12 px-4">
             {/* Back link + header */}
             <Link
-                to="/user"
+                to="/account"
                 className="text-sm text-gray-500 hover:text-black transition"
             >
-                ← Back to dashboard
+                ← Back to account settings
             </Link>
 
             <div className="mt-4 mb-8">

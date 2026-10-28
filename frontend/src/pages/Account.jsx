@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Label } from '../components/tailgrids/core/label';
 import { Input } from '../components/tailgrids/core/input';
@@ -14,12 +14,12 @@ const Account = ({ user, setUser }) => {
     const [confirmation, setConfirmation] = useState("");
     const [deleteError, setDeleteError] = useState("");
 
-    useEffect(() => {
-        if (user) {
-        setUsername(user.username ?? "");
-        setEmail(user.email ?? "");
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     if (user) {
+    //     setUsername(user.username ?? "");
+    //     setEmail(user.email ?? "");
+    //     }
+    // }, [user]);
 
     const navigate = useNavigate();
 

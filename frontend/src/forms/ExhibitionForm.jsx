@@ -52,13 +52,15 @@ const ExhibitionForm = ({ user }) => {
         } catch (error) {
             setSubmitError(error.message);
         } finally {
-       
+            setIsSubmitting(false);
+        }
     };
-    }
+
     if (!user?.is_admin) {
         return <p>Admin access required.</p>;
     }
 
+    
   return (
     <>
           <section>
