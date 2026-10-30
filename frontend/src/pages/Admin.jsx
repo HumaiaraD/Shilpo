@@ -225,6 +225,8 @@ const Admin = ({ user }) => {
         exhibitions={myExhibitions}
         handleDeleteExhibition={handleDeleteExhibition}
         handleEditExhibition={handleEditExhibition}
+
+        isAdmin={user?.is_admin === true}
       />
     </>
   );

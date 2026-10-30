@@ -14,7 +14,9 @@ const ManageData = ({
 
   exhibitions,
   handleEditExhibition,
-  handleDeleteExhibition
+  handleDeleteExhibition,
+
+  isAdmin,
 }) => {
   const editButton =
     "rounded-lg bg-stone-100 px-4 py-2 text-sm text-stone-700 hover:bg-stone-200";
@@ -200,10 +202,11 @@ const ManageData = ({
     </section>
 
     <section className="mt-10 ">
-<h2 className="text-3xl font-lavishly font-bold text-stone-700 mb-8 text-center">
+      <h2 className="text-3xl font-lavishly font-bold text-stone-700 mb-8 text-center">
         Manage Exhibition
       </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {isAdmin ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                           {exhibitions.map((exhibition) => (
                             <div key={exhibition.id} className="border border-stone-200 rounded-xl p-4">
                               {exhibition.cover_image_url && (
@@ -212,7 +215,7 @@ const ManageData = ({
                                   alt={exhibition.title}
                                   className="w-full h-48 object-cover"
                                 />
-                              )}
+                              )}            
 
                               <h3 className="text-xl mt-3">{exhibition.title}</h3>
                               <p className="text-sm text-stone-600">
@@ -236,8 +239,10 @@ const ManageData = ({
                               </div>
                             </div>
                           ))}
-                        </div>
-                      </section>
+                        </div> ) :  (<p className="text-center text-stone-500">Not authorised.</p>)
+}
+
+        </section>
     </>
   );
 };
